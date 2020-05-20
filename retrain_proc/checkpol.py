@@ -11,9 +11,7 @@ import time
 import os
 
 # Path to Marabou folder if you did not export it
-#sys.path.append('/home/nfunk/Code_MA/NN_veri/Marabou')
 sys.path.append('/home/nfunk/Code_MA/nn_veri/Marabou')
-# print(sys.path), print(sys.version_info)
 
 
 def default_block(last_bias,final=False):

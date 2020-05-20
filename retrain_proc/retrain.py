@@ -269,7 +269,7 @@ def learn(env, policy_func, *,
     op_pi_nn = pi.op_pi_orig
     op_pi_nn = tf.reshape(op_pi_nn,[-1])
     #op_pi_super = tf.reshape(op_pi_super,[1,-1])
-    op_pi_nn = tf.Print(op_pi_nn,[tf.math.sigmoid(5*(tf.math.abs(op_pi_nn-op_pi_super)-0.5)),(op_pi_nn-op_pi_super)])
+    #op_pi_nn = tf.Print(op_pi_nn,[tf.math.sigmoid(5*(tf.math.abs(op_pi_nn-op_pi_super)-0.5)),(op_pi_nn-op_pi_super)])
 
     # only influence the policy over options
     # use a sigmoid weight to ensure, e.g. if the label is 60% but we use 100% this is also fine,..
@@ -448,7 +448,7 @@ def learn(env, policy_func, *,
                 
                 # different terminating conditions of the optimization depending on the option
                 if (opt==0):
-                    print (np.mean(loss_opt_0))
+                    #print (np.mean(loss_opt_0))
                     if (curr_iter > 100):
                         break
                 if (opt==1):
