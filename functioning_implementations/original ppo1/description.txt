@@ -1,0 +1,15 @@
+The files in here represent the original ppo1 implementation from baselines.
+
+They have been adapted such that they can be used for my evaluation, etc. files in here!!!
+
+Exemplary commands for TRAINING:
+
+ON THE CLUSTER (only works in the home folder,..)
+condor_submit_bid 5 ppo1_official.sub arguments="train_ppo1_official.sh Ant-v2 12"
+
+ON THE COMPUTER
+python run_mujoco.py --env Ant-v2 --seed 100
+
+
+Exemplary commands for EVALUATION:
+python run_visual.py --env=HalfCheetah-v2 --seed=500 --opt=1 --epoch=485 --path=/home/niggi/results_ppoc_off_tryout/from_cluster/officialPPO_halfcheetahseed500_1opts_saves/ --render=1 --official=1 --orig_ppo=1
