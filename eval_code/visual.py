@@ -210,22 +210,15 @@ def learn(env, policy_func, *,
                     # Set this to true if you want to evaluate a model that has been retrained using our verification framework
                     if (False):
 
-                        # Set this to true of you want to evaluate a model that has been retrained using communication only
-                        # Set to false if evaluating a retraining file with both, communication and no communication
-                        if (False):
-                            # this explicitly uses the retrained (stability) version:
-                            print ("CAREFUL NO RANDOMACTION -> VERIFICATION MODE")
-                            ac = pi._act_mean([ob],[option])[0][0]
-                        else:
-                            print ("CAREFUL NO RANDOMACTION -> VERIFICATION MODE")
-                            dec = pi._get_op_orig([ob])[0][0][0]
+                        print ("CAREFUL EVALUATING MODEL THAT HAS BEEN REFINED")
+                        dec = pi._get_op_orig([ob])[0][0][0]
 
-                            if (dec>0):
-                                option = 0
-                                ac = prevac
-                            else:
-                                option = 1
-                                ac = pi._act_mean([ob],[option])[0][0]
+                        if (dec>0):
+                            option = 0
+                            ac = prevac
+                        else:
+                            option = 1
+                            ac = pi._act_mean([ob],[option])[0][0]
 
                     else:
                         # normal operation:
