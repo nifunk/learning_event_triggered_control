@@ -1,10 +1,18 @@
 # General Information
 
-This is the core repository for running the event-triggered methods, as well as various baselines in Simulation.
+This repository contains the code concerning the publication "Joint Learning of Event-triggered Control and Communication Policies" by N. Funk, D. Baumann, V. Berenz and S. Trimpe. 
 
-The main part of the repo is a modified version of the baselines repository from OpenAI.
+In this publication, we present a framework for model-free learning of event-triggered communication and control policies from data. Event-triggered methods are essential to realize the potential of future networked control systems, where feedback loops are closed over wireless networks, and communication thus becomes a scarce resource. The learning approach jointly optimizes communication and control policy, which is required since the separation principle does not hold in general for event-triggered control, and can be applied to nonlinear and high-dimensional systems, as we demonstrate in challenging simulation examples. Further, we show in practical experiments on a robotic system that the method is also applicable to real-world systems and present an approach towards checking the stability of joint control and communication policies represented by deep neural networks.
 
-However, several adatptions have been conducted such that it is suitable for the goal of event-triggered control.
+# Credits
+
+This repository is based on previous work:
+
+It contains parts of the [OpenAI baselines repository](https://github.com/openai/baselines) inside the folder **baselines**. Inside this folder you can also find the corresponding license.
+
+The implementation of our proposed hierarchical reinforcement learning algorithm is based on prior work by Martin Klissarov et. al and their [PPOC repository](https://github.com/mklissa/PPOC).
+
+For the stability verification algorithm we use parts from the [NNet repository](https://github.com/sisl/NNet). The license, as well as the files that we use from this repo are placed in the folder **retrain_proc/utils**.
 
 # Repo overview
 
