@@ -1,0 +1,4 @@
+The yaml file (conda_env.yml) contains the exported gym environment that has been used to come up with the results in the highdimensional environment
+
+The yaml file (verification_env.yml) contains the exported gym environment that has been used to come up with the results for the stability framework.
+
