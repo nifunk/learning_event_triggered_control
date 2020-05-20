@@ -70,7 +70,7 @@ def main():
     parser.add_argument('--saves', dest='saves', action='store_true', default=False)
     parser.add_argument('--wsaves', dest='wsaves', action='store_true', default=False)    
     parser.add_argument('--epoch', help='Epoch', type=int, default=-1) 
-    parser.add_argument('--dc', type=float, default=0.)
+    parser.add_argument('--dc', type=float, default=0.1)
 
 
     args = parser.parse_args()

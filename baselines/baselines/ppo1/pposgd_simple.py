@@ -192,11 +192,15 @@ def learn(env, policy_func, *,
     gamename = env.spec.id[:-3].lower()
     gamename += 'seed' + str(seed)
     gamename += app
-    version_name = 'NORM-ACT-LOWER-LR-len-400-wNoise-update1-ppo-ESCH-1-4-0-nI' 
+    version_name = 'NORM-ACT-LOWER-LR-len-400-wNoise-update1-ppo-ESCH-1-1-0-nI' 
 
     dirname = '{}_{}_{}opts_saves/'.format(version_name,gamename,num_options)
     print (dirname)
-    #input ("wait here after dirname")
+    # retrieve everything using relative paths. Create a train_results folder where the repo has been cloned
+    dirname_rel = os.path.dirname(__file__)
+    splitted = dirname_rel.split("/")
+    dirname_rel = ("/".join(dirname_rel.split("/")[:len(splitted)-3])+"/")
+    dirname = dirname_rel + "train_results/" + dirname
 
     if wsaves:
         first=True
@@ -209,7 +213,7 @@ def learn(env, policy_func, *,
         files = ['pposgd_simple.py','mlp_policy.py','run_mujoco.py']
         first = True
         for i in range(len(files)):
-            src = os.path.join('/home/nfunk/Code_MA/ppoc_off_tryout/baselines/baselines/ppo1/') + files[i]
+            src = os.path.join(dirname_rel,'baselines/baselines/ppo1/') + files[i]
             print (src)
             #dest = os.path.join('/home/nfunk/results_NEW/ppo1/') + dirname
             dest = dirname + "src_code/"
@@ -219,7 +223,7 @@ def learn(env, policy_func, *,
             print (dest)
             shutil.copy2(src,dest)
         # brute force copy normal env file at end of copying process:
-        src = os.path.join('/home/nfunk/Code_MA/ppoc_off_tryout/nfunk/envs_nf/pendulum_nf.py')         
+        src = os.path.join(dirname_rel,'nfunk/envs_nf/pendulum_nf.py')         
         shutil.copy2(src,dest)
     ###
 
@@ -315,7 +319,7 @@ def learn(env, policy_func, *,
     ### More book-kepping
     results=[]
     if saves:
-        results = open(version_name + '_' + gamename +'_'+str(num_options)+'opts_'+'_results.csv','w')
+        results = open(dirname + version_name + '_' + gamename +'_'+str(num_options)+'opts_'+'_results.csv','w')
         results_best_model = open(dirname + version_name + '_' + gamename +'_'+str(num_options)+'opts_'+'_bestmodel.csv','w')
 
 

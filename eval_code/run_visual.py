@@ -95,7 +95,7 @@ def main():
     parser.add_argument('--wsaves', dest='wsaves', action='store_true', default=False)    
     parser.add_argument('--epoch', help='Epoch', type=int, default=-1) 
     parser.add_argument('--path', help='Path to the file to be loaded', type=str, default='')        
-    parser.add_argument('--dc', type=float, default=0.)
+    parser.add_argument('--dc', type=float, default=0.1)
     parser.add_argument('--render', help='decision whether to render or not', type=int, default=0)
     parser.add_argument('--official', help='decision whether its an official implementation or not', type=int, default=0)
     parser.add_argument('--orig_ppo', help='decision whether its original ppo', type=int, default=0)
