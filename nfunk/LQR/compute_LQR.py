@@ -1,3 +1,5 @@
+# Copyright (c) 2020 Max Planck Gesellschaft
+
 '''
 File in order to compute an optimal LQR controller
 x[k] = [theta , thetaDot]

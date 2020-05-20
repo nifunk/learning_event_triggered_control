@@ -1,3 +1,4 @@
+# Copyright (c) 2020 Max Planck Gesellschaft
 # !/usr/bin/env python
 import sys
 sys.path.append('../')

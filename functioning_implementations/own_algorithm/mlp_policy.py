@@ -1,3 +1,5 @@
+# Copyright (c) 2020 Max Planck Gesellschaft
+
 from baselines.common.mpi_running_mean_std import RunningMeanStd
 import baselines.common.tf_util as U
 import tensorflow as tf

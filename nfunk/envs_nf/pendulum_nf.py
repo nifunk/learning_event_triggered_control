@@ -1,3 +1,5 @@
+# Copyright (c) 2020 Max Planck Gesellschaft
+# Modified the pendulum environment from https://github.com/openai/gym 
 import gym
 from gym import spaces
 from gym.utils import seeding

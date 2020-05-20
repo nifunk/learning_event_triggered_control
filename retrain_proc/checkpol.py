@@ -1,3 +1,4 @@
+# Copyright (c) 2020 Max Planck Gesellschaft
 import sys
 import warnings
 import numpy as np

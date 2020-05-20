@@ -1,3 +1,5 @@
+# Copyright (c) 2020 Max Planck Gesellschaft
+
 # !/usr/bin/env python
 from baselines.common import set_global_seeds, tf_util as U
 from baselines import bench

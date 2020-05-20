@@ -1,3 +1,5 @@
+# Copyright (c) 2020 Max Planck Gesellschaft
+
 '''
 Class which implements an agent, based on an "optimal" LQR policy
 This LQR agent stabilizes the pendulum on top!
