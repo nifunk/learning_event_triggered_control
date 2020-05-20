@@ -14,6 +14,8 @@ The implementation of our proposed hierarchical reinforcement learning algorithm
 
 For the stability verification algorithm we use parts from the [NNet repository](https://github.com/sisl/NNet). The license, as well as the files that we use from this repo are placed in the folder **retrain_proc/utils**.
 
+If you use this code, please kindly cite the publication **TODO: INSERT PUBLICATION!!!**
+
 # Reproducing the results on the Pendulum / Highdimensional environments
 
 This is a step by step instruction how to reproduce the results
@@ -87,3 +89,7 @@ Short overview over the repo:
   * it also contains a folder called modified_ant_env. Inside this folder are the instructions how to add the modified Ant environment (called Antnff-v8) to the OpenAI gym implementations
 
 While for the most part, the repo is self-contained, a prerequisite for using the retraining is the successfull installation of Marabou. Further, a MuJoCo licence is required for the experiments in higher dimensions.
+
+# Copyright
+
+Copyright (c) 2020 Max Planck Gesellschaft

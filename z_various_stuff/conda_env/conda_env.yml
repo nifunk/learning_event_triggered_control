@@ -1,4 +1,4 @@
-name: tf_gpu
+name: jl_etc
 channels:
   - defaults
 dependencies:
@@ -46,11 +46,11 @@ dependencies:
     - six==1.12.0
     - tensorboard==1.14.0
     - tensorflow-estimator==1.14.0
-    - tensorflow-gpu==1.14.0
+    - tensorflow==1.14.0
     - termcolor==1.1.0
     - tqdm==4.36.1
     - werkzeug==0.16.0
     - wheel==0.33.6
     - wrapt==1.11.2
-prefix: /home/nfunk/anaconda3/envs/tf_gpu
+prefix: /home/nfunk/anaconda3/envs/jl_etc
 
