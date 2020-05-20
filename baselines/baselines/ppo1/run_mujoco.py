@@ -4,18 +4,22 @@ from baselines import bench
 import os.path as osp
 import gym, logging
 import pdb
-
+import os
+dirname_rel = os.path.dirname(__file__)
+splitted = dirname_rel.split("/")
+dirname_rel = ("/".join(dirname_rel.split("/")[:len(splitted)-3])+"/")
 from baselines import logger
 import sys
 sys.path.append('../../../')
+sys.path.append(dirname_rel)
 
 def train(env_id, num_timesteps, seed, num_options,app, saves ,wsaves, epoch,dc):
     from baselines.ppo1 import mlp_policy, pposgd_simple
     U.make_session(num_cpu=1).__enter__()
     set_global_seeds(seed)
     from gym.envs.registration import register
-    # Potential Pendulum Env
-    if (False):
+    # Depending on the environment keyword, the appropriate environment is chosen
+    if (env_id=='Pendulumnf-v0'):
         register(
             id='Pendulumnf-v0',
             entry_point='nfunk.envs_nf.pendulum_nf:PendulumEnv',
@@ -24,7 +28,7 @@ def train(env_id, num_timesteps, seed, num_options,app, saves ,wsaves, epoch,dc)
         )
         env = gym.make('Pendulumnf-v0')
     # Potential Scalar Env
-    if (False):
+    elif (env_id=='Scalarnf-v0'):
         register(
             id='Scalarnf-v0',
             entry_point='nfunk.envs_nf.gym_scalar_nf:GymScalarEnv',
@@ -32,8 +36,9 @@ def train(env_id, num_timesteps, seed, num_options,app, saves ,wsaves, epoch,dc)
             #kwargs = vars(args),
         )
         env = gym.make('Scalarnf-v0')
-    if (True):
+    else:
         env = gym.make(env_id)
+    # This creates the NN policies with 2 hidden layers and 64 neurons per layer
     def policy_fn(name, ob_space, ac_space):
         return mlp_policy.MlpPolicy(name=name, ob_space=ob_space, ac_space=ac_space,
             hid_size=64, num_hid_layers=2, num_options=num_options, dc=dc)
@@ -50,6 +55,14 @@ def train(env_id, num_timesteps, seed, num_options,app, saves ,wsaves, epoch,dc)
         print("Only two options or primitive actions is currently supported.")
         sys.exit()
 
+    # this esentially calls the learning algorithm
+    # Note the default values:
+    # clip_param (epsilon) in PPO implementation set to 0.2
+    # Learning rate: 3e-5
+    # Discount factor gamma 0.99
+    # Lambda for GAE: 0.95
+    # Batchsize: 2048
+    # saves, wsaves: should set to true if you want to store the results of the training
     pposgd_simple.learn(env, policy_fn, 
             max_timesteps=num_timesteps,
             timesteps_per_batch=2048,

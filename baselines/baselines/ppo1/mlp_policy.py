@@ -6,6 +6,7 @@ from baselines.common.distributions import make_pdtype
 import numpy as np
 import pdb
 
+# In this file the parametrization of the policies is implemented
 
 def dense3D2(x, size, name, option, num_options=1, weight_init=None, bias=True):
     w = tf.get_variable(name + "/w", [num_options, x.get_shape()[1], size], initializer=weight_init)
@@ -28,7 +29,7 @@ class MlpPolicy(object):
     def _init(self, ob_space, ac_space, hid_size, num_hid_layers, gaussian_fixed_var=True, num_options=2,dc=0):
         assert isinstance(ob_space, gym.spaces.Box)
 
-
+        # Define the dimensions
         self.ac_space_dim = ac_space.shape[0]
         self.ob_space_dim = ob_space.shape[0]
         self.dc = dc
@@ -52,6 +53,7 @@ class MlpPolicy(object):
         obz = tf.clip_by_value((ob - self.ob_rms.mean) / self.ob_rms.std, -5.0, 5.0)
         obz_pure = tf.clip_by_value((ob[:,:-self.ac_space_dim] - self.ob_rms_only.mean) / self.ob_rms_only.std, -5.0, 5.0)
 
+        # implementation of the Q-funtion:
         last_out0 = obz # for option 0
         last_out1 = obz_pure # for option 1
         for i in range(num_hid_layers):
@@ -60,13 +62,11 @@ class MlpPolicy(object):
         last_out0 = U.dense(last_out0, 1, "vfff0", weight_init=U.normc_initializer(1.0))
         last_out1 = U.dense(last_out1, 1, "vfff1", weight_init=U.normc_initializer(1.0))
 
-        #self.vpred = dense3D2(last_out, 1, "vffinal", option, num_options=num_options, weight_init=U.normc_initializer(1.0))[:,0]
-        #last_out0 = tf.Print(last_out0,[tf.size(last_out0[:,0])])
+
+        # presents the value of (state,option) -> denoted as Q-fct in report        
         self.vpred = U.switch(option[0], last_out1, last_out0)[:,0]
 
-        
-        #self.op_pi = tf.nn.softmax(U.dense(tf.stop_gradient(last_out), num_options, "OPfc%i"%(i+1), weight_init=U.normc_initializer(1.0)))
-
+        # Implementation of the policy over options:
         last_out0 = obz # for option 0
         last_out1 = obz_pure # for option 1
         for i in range(num_hid_layers):
@@ -75,15 +75,16 @@ class MlpPolicy(object):
         last_out0 = U.dense(last_out0, 1, "oppif0", weight_init=U.normc_initializer(1.0))
         last_out1 = U.dense(last_out1, 1, "oppif1", weight_init=U.normc_initializer(1.0))
         last_out = tf.concat([last_out0, last_out1], 1)
+        # this is the output of the policy over options:
         self.op_pi = tf.nn.softmax(last_out)
 
         self.tpred = tf.nn.sigmoid(dense3D2(tf.stop_gradient(last_out), 1, "termhead", option, num_options=num_options, weight_init=U.normc_initializer(1.0)))[:,0]
-        #termination_sample = tf.greater(self.tpred, tf.random_uniform(shape=tf.shape(self.tpred),maxval=1.))
+        
+        # Always terminate
         termination_sample = tf.constant([True])
         
-        # define the angle
-        #ctrl_in = tf.reshape([(tf.math.atan2(ob[:,1],ob[:,0])),(ob[:,2])], [-1,2])
-        #last_out = ctrl_in
+
+        # calculate the control action: -> implementation of intra option policy
         last_out = obz_pure
         for i in range(num_hid_layers):
             last_out = tf.nn.tanh(U.dense(last_out, hid_size, "polfc%i"%(i+1), weight_init=U.normc_initializer(1.0)))
@@ -95,16 +96,17 @@ class MlpPolicy(object):
         else:
             pdparam = U.dense(last_out, pdtype.param_shape()[0], "polfinal", U.normc_initializer(0.01))
 
-        #self.op_pi = tf.nn.softmax(U.dense(tf.stop_gradient(last_out), num_options, "OPfc%i"%(i+1), weight_init=U.normc_initializer(1.0)))
 
         self.pd = pdtype.pdfromflat(pdparam)
 
         self.state_in = []
         self.state_out = []
 
+        # if stochastic is true, we sample around the mean, this corresponds to the exploration at the action level
         stochastic = tf.placeholder(dtype=tf.bool, shape=())
         ac = U.switch(stochastic, self.pd.sample(), self.pd.mode())
-        #ac = tf.Print (ac, [ac,option,ob], "action and option before selecting: ")
+        
+        # determine the control action to be applied. In case of ZOH == opt 0 just use u[k-1]
         ac = U.switch(option[0], ac, tf.stop_gradient(ob[:,-self.ac_space_dim:]))
         ac = tf.clip_by_value(ac,-1.0,1.0)
         #ac = U.switch(option[0], tf.constant(1.0), tf.constant(0.0))
@@ -120,16 +122,19 @@ class MlpPolicy(object):
 
 
     def act(self, stochastic, ob, option):
+        # function returns, action and Q-fct prediction
         ac1, vpred1, feats, logstd =  self._act(stochastic, ob[None], [option])
         return ac1[0], vpred1[0], feats[0], logstd[option][0]
 
 
     def get_option(self,ob):
+        # function which returns which option is to be executed
         op_prob = self._get_op([ob])[0][0]
         return np.random.choice(range(len(op_prob)), p=op_prob)
 
 
     def get_term_adv(self, ob, curr_opt):
+        # this function calculates the terminal advantage. Not needed as we always terminate...
         vals = []
         for opt in range(self.num_options):
             vals.append(self._get_v(ob,[opt])[0])
@@ -140,6 +145,7 @@ class MlpPolicy(object):
 
 
     def get_opt_adv(self, ob, curr_opt):
+        # This function returns the advantage over the options, where we use the maximum Q-value
         vals = []
         for opt in range(self.num_options):
             vals.append(self._get_v(ob,[opt])[0])
@@ -151,6 +157,7 @@ class MlpPolicy(object):
         return ((vals[curr_opt[0]] - vals_max+ self.dc ),  (vals[curr_opt[0]] - vals_max) )
 
     def get_opt_adv_oldpi(self, ob, curr_opt, oldpi):
+        # This function returns the advantage over the options, where we use the max value as the reference
         vals = []
         for opt in range(self.num_options):
             vals.append(self._get_v(ob,[opt])[0])
@@ -159,8 +166,6 @@ class MlpPolicy(object):
         # choose max value as reference:
         vals_max = np.amax(vals,axis=0)
 
-        #op_prob = oldpi._get_op(ob)[0].transpose()
-        #return (vals[curr_opt[0]] - np.sum((op_prob*vals),axis=0) + self.dc),  ( vals[curr_opt[0]] - np.sum((op_prob*vals),axis=0) )
         return ((vals[curr_opt[0]] - vals_max+ self.dc ),  (vals[curr_opt[0]] - vals_max) )
 
 
@@ -172,6 +177,7 @@ class MlpPolicy(object):
         return []
 
     def reset_last_act(self):
+        # in case of starting a new rollout, set u[k-1] to 0,...
         self.last_action = self.last_action_init
         return self.last_action
 

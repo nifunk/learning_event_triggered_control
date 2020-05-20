@@ -14,6 +14,8 @@ from scipy import spatial
 import gym
 
 def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,results,rewbuffer,dc):
+    # sample state action pairs, i.e. sample rollouts on the system
+    
     max_action = env.action_space.high
     t = 0
     glob_count = 0
@@ -56,11 +58,15 @@ def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,resul
 
 
     while True:
+        # in here collect the state action pairs:
+
         prevac = ac
         # remember u[k-1]
         ob[ob_env_shape[0]:] = ac
+        # evaluate policy and recieve action
         ac, vpred, feats,logstd = pi.act(stochastic, ob, option)
         logstds[option].append(logstd)
+        
         # Slight weirdness here because we need value function at time T
         # before returning segment [0, T-1] so we get the correct
         # terminal value
@@ -89,16 +95,15 @@ def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,resul
         prevacs[i] = prevac
 
 
-        #ob, rew, new, _ = env.step(ac)
-        #print (ac)
-        # Careful: Without this "copy" operation the variable ac is actually modified...
-        ob[:ob_env_shape[0]], rew, new, _ = env.step(max_action*np.copy(ac))
-        if (option==1):
-            rew = rew - 1.0
-        rew = rew*1.0
 
-        #print (ac)
-        #input ("Wait -> double checking!")
+        # Careful: Without this "copy" operation the variable ac is actually modified...
+        # Apply the action to the environment
+        ob[:ob_env_shape[0]], rew, new, _ = env.step(max_action*np.copy(ac))
+        # IMPORTANT: here the reward is modified in case of communication, i.e., executing option 1
+        comm_penalty = 1.0
+        if (option==1):
+            rew = rew - comm_penalty
+        rew = rew*1.0
 
         rew = rew/10 if num_options > 1 else rew # To stabilize learning.
         rews[i] = rew
@@ -120,9 +125,8 @@ def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,resul
         #print (term)
         ###
 
-        if term:
-            #if num_options > 1:
-            #    rews[i] -= dc            
+        # in case of termination, decide which option to execute next:
+        if term:            
             opt_duration[option].append(curr_opt_duration)
             curr_opt_duration = 0.
             option = pi.get_option(ob)
@@ -135,6 +139,7 @@ def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,resul
 
 
         if new:
+            # if new rollout starts -> reset last action and start anew
             ep_rets.append(cur_ep_ret)
             ep_lens.append(cur_ep_len)
             cur_ep_ret = 0
@@ -192,23 +197,26 @@ def learn(env, policy_func, *,
     gamename = env.spec.id[:-3].lower()
     gamename += 'seed' + str(seed)
     gamename += app
-    version_name = 'NORM-ACT-LOWER-LR-len-400-wNoise-update1-ppo-ESCH-1-1-0-nI' 
+    # This variable: "version name, defines the name of the training"
+    version_name = 'NORM-ACT-LOWER-LR-len-400-wNoise-update1-ppo-ESCH-1-4-0-nI' 
 
     dirname = '{}_{}_{}opts_saves/'.format(version_name,gamename,num_options)
     print (dirname)
+
     # retrieve everything using relative paths. Create a train_results folder where the repo has been cloned
     dirname_rel = os.path.dirname(__file__)
     splitted = dirname_rel.split("/")
     dirname_rel = ("/".join(dirname_rel.split("/")[:len(splitted)-3])+"/")
     dirname = dirname_rel + "train_results/" + dirname
 
+    # if saving -> create the necessary directories
     if wsaves:
         first=True
         if not os.path.exists(dirname):
             os.makedirs(dirname)
             first = False
-        # while os.path.exists(dirname) and first:
-        #     dirname += '0'
+
+        # copy also the original files into the folder where the training results are stored
 
         files = ['pposgd_simple.py','mlp_policy.py','run_mujoco.py']
         first = True
@@ -223,7 +231,7 @@ def learn(env, policy_func, *,
             print (dest)
             shutil.copy2(src,dest)
         # brute force copy normal env file at end of copying process:
-        src = os.path.join(dirname_rel,'nfunk/envs_nf/pendulum_nf.py')         
+        src = os.path.join(dirname_rel,'nfunk/envs_nf/pendulum_nf.py')          
         shutil.copy2(src,dest)
     ###
 
@@ -238,23 +246,24 @@ def learn(env, policy_func, *,
     ob_space.shape =((ob_space.shape[0] + ac_space.shape[0]),)
     print (ob_space.shape)
     print (ac_space.shape)
-    #input ("wait here where the spaces are printed!!!")
+
     pi = policy_func("pi", ob_space, ac_space) # Construct network for new policy
     oldpi = policy_func("oldpi", ob_space, ac_space) # Network for old policy
-    atarg = tf.placeholder(dtype=tf.float32, shape=[None]) # Target advantage function (if applicable)
+    atarg = tf.placeholder(dtype=tf.float32, shape=[None]) # Target advantage function 
     ret = tf.placeholder(dtype=tf.float32, shape=[None]) # Empirical return
-    pol_ov_op_ent = tf.placeholder(dtype=tf.float32, shape=None) # Empirical return
+    pol_ov_op_ent = tf.placeholder(dtype=tf.float32, shape=None) # Entropy coefficient for policy over options
 
-    # option = tf.placeholder(dtype=tf.int32, shape=[None])
 
     lrmult = tf.placeholder(name='lrmult', dtype=tf.float32, shape=[]) # learning rate multiplier, updated with schedule
-    clip_param = clip_param * lrmult # Annealed cliping parameter epislon
+    clip_param = clip_param * lrmult # Annealed cliping parameter epislon for PPO
 
-    # pdb.set_trace()
+
+    # setup observation, option and terminal advantace
     ob = U.get_placeholder_cached(name="ob")
     option = U.get_placeholder_cached(name="option")
     term_adv = U.get_placeholder(name='term_adv', dtype=tf.float32, shape=[None])
 
+    # create variable for action
     ac = pi.pdtype.sample_placeholder([None])
 
     kloldnew = oldpi.pd.kl(pi.pd)
@@ -263,46 +272,54 @@ def learn(env, policy_func, *,
     meanent = U.mean(ent)
     pol_entpen = (-entcoeff) * meanent
 
-    ratio = tf.exp(pi.pd.logp(ac) - oldpi.pd.logp(ac)) # pnew / pold
-    atarg_clip = atarg#tf.clip_by_value(atarg,-10,10)
+    # propability of choosing action under new policy vs old policy (PPO)
+    ratio = tf.exp(pi.pd.logp(ac) - oldpi.pd.logp(ac)) 
+    # advantage of choosing the action
+    atarg_clip = atarg
+    # surrogate 1:
     surr1 = ratio * atarg_clip #atarg # surrogate from conservative policy iteration
-    surr2 = U.clip(ratio, 1.0 - clip_param, 1.0 + clip_param) * atarg_clip #atarg #
-    pol_surr = - U.mean(tf.minimum(surr1, surr2)) # PPO's pessimistic surrogate (L^CLIP)
+    # surrogate 2:
+    surr2 = U.clip(ratio, 1.0 - clip_param, 1.0 + clip_param) * atarg_clip 
+    # PPO's pessimistic surrogate (L^CLIP)
+    pol_surr = - U.mean(tf.minimum(surr1, surr2)) 
 
-    #vf_loss = U.mean(tf.square(tf.clip_by_value(pi.vpred - ret, -10.0, 10.0)))
+    # Loss on the Q-function
     vf_loss = U.mean(tf.square(pi.vpred - ret))
-    total_loss = pol_surr + pol_entpen + vf_loss
+    # calculate the total loss
+    total_loss = pol_surr + vf_loss
     losses = [pol_surr, pol_entpen, vf_loss, meankl, meanent]
     loss_names = ["pol_surr", "pol_entpen", "vf_loss", "kl", "ent"]
 
-    term_loss = pi.tpred * term_adv
-
-    force_pi_loss = U.mean(tf.square(tf.clip_by_value(pi.op_pi, 1e-5, 1.0)-tf.constant([[0.05,0.95]])))
-
+    # calculate logarithm of propability of policy over options
     log_pi = tf.log(tf.clip_by_value(pi.op_pi, 1e-5, 1.0))
     #log_pi = tf.Print(log_pi, [log_pi, tf.shape(tf.transpose(log_pi))])
+    # calculate logarithm of propability of policy over options old parameter
     old_log_pi = tf.log(tf.clip_by_value(oldpi.op_pi, 1e-5, 1.0))
+    # calculate entropy of policy over options
     entropy = -tf.reduce_sum(pi.op_pi * log_pi, reduction_indices=1)
 
+    # calculate the ppo update for the policy over options:
     ratio_pol_ov_op = tf.exp(tf.transpose(log_pi)[option[0]] - tf.transpose(old_log_pi)[option[0]]) # pnew / pold
-    term_adv_clip = term_adv #tf.clip_by_value(term_adv,-10,10)
+    term_adv_clip = term_adv 
     surr1_pol_ov_op = ratio_pol_ov_op * term_adv_clip # surrogate from conservative policy iteration
     surr2_pol_ov_op = U.clip(ratio_pol_ov_op, 1.0 - clip_param, 1.0 + clip_param) * term_adv_clip #
     pol_surr_pol_ov_op = - U.mean(tf.minimum(surr1_pol_ov_op, surr2_pol_ov_op)) # PPO's pessimistic surrogate (L^CLIP)
     
     op_loss = pol_surr_pol_ov_op - pol_ov_op_ent*tf.reduce_sum(entropy)
-    #op_loss = pol_surr_pol_ov_op 
 
-    #total_loss += force_pi_loss
+    # add loss of policy over options to total loss
     total_loss += op_loss
     
     var_list = pi.get_trainable_variables()
     term_list = var_list[6:8]
 
+    # define function that we will later do gradient descent on
     lossandgrad = U.function([ob, ac, atarg, ret, lrmult,option, term_adv,pol_ov_op_ent], losses + [U.flatgrad(total_loss, var_list)])
-    termloss = U.function([ob, option, term_adv], [U.flatgrad(term_loss, var_list)]) # Since we will use a different step size.
+    
+    # define adam optimizer
     adam = MpiAdam(var_list, epsilon=adam_epsilon)
 
+    # define function that will assign the current parameters to the old policy
     assign_old_eq_new = U.function([],[], updates=[tf.assign(oldv, newv)
         for (oldv, newv) in zipsame(oldpi.get_variables(), pi.get_variables())])
     compute_losses = U.function([ob, ac, atarg, ret, lrmult, option], losses)
@@ -312,11 +329,14 @@ def learn(env, policy_func, *,
     adam.sync()
 
 
+    # NOW: everything for training was defined, from here on we start with the execution:
+
+    # initialize "savers" which will store the results
     saver = tf.train.Saver(max_to_keep=10000)
     saver_best = tf.train.Saver(max_to_keep=1)
 
 
-    ### More book-kepping
+    ### Define the names of the .csv files that are going to be stored
     results=[]
     if saves:
         results = open(dirname + version_name + '_' + gamename +'_'+str(num_options)+'opts_'+'_results.csv','w')
@@ -334,6 +354,7 @@ def learn(env, policy_func, *,
         # results.write('epoch,avg_reward,option 1 dur, option 2 dur, option 1 term, option 2 term\n')
         results.flush()
 
+    # speciality: if running the training with epoch argument -> a model is loaded
     if epoch >= 0:
         
         dirname = '{}_{}opts_saves/'.format(gamename,num_options)
@@ -344,13 +365,13 @@ def learn(env, policy_func, *,
     ###    
 
 
-
+    # start training
     episodes_so_far = 0
     timesteps_so_far = 0
     global iters_so_far
     iters_so_far = 0
-    des_pol_op_ent = 0.1
-    max_val = -100000
+    des_pol_op_ent = 0.1    # define policy over options entropy scheduling
+    max_val = -100000       # define max_val, this will be updated to always store the best model
     tstart = time.time()
     lenbuffer = deque(maxlen=100) # rolling buffer for episode lengths
     rewbuffer = deque(maxlen=100) # rolling buffer for episode rewards
@@ -383,11 +404,13 @@ def learn(env, policy_func, *,
 
         logger.log("********** Iteration %i ************"%iters_so_far)
 
+        # Sample (s,a)-Transitions
         seg = seg_gen.__next__()
+        # Calculate A(s,a,o) using GAE
         add_vtarg_and_adv(seg, gamma, lam)
 
 
-
+        # calculate information for logging
         opt_d = []
         for i in range(num_options):
             dur = np.mean(seg['opt_dur'][i]) if len(seg['opt_dur'][i]) > 0 else 0.
@@ -411,15 +434,17 @@ def learn(env, policy_func, *,
         if hasattr(pi, "ob_rms_only"): pi.ob_rms_only.update(ob[:,:-ac_space.shape[0]]) # update running mean/std for policy
         assign_old_eq_new() # set old parameter values to new parameter values
 
+        # if iterations modulo 1000 -> adapt entropy scheduling coefficient
         if (iters_so_far+1)%1000 == 0:
             des_pol_op_ent = des_pol_op_ent/10
 
+        # every 50 epochs save the best model
         if iters_so_far % 50 == 0 and wsaves:
             print("weights are saved...")
             filename = dirname + '{}_epoch_{}.ckpt'.format(gamename,iters_so_far)
             save_path = saver.save(U.get_session(),filename)
 
-        # adaptively save best run:
+        # adaptively save best model -> if current reward is highest, save the model
         if (np.mean(rewbuffer)>max_val) and wsaves:
             max_val = np.mean(rewbuffer)
             results_best_model.write('epoch: '+str(iters_so_far) + 'rew: ' + str(np.mean(rewbuffer)) + '\n')
@@ -429,9 +454,12 @@ def learn(env, policy_func, *,
 
 
 
-
-        min_batch=160 # Arbitrary
+        # minimum batch size:
+        min_batch=160 
         t_advs = [[] for _ in range(num_options)]
+        
+        # select all the samples concering one of the options
+        # Note: so far the update is that we first use all samples from option 0 to update, then we use all samples from option 1 to update
         for opt in range(num_options):
             indices = np.where(opts==opt)[0]
             print("batch size:",indices.size)
@@ -477,9 +505,8 @@ def learn(env, policy_func, *,
             ###
 
 
-
+            # define the batchsize of the optimizer:
             optim_batchsize = optim_batchsize or ob.shape[0]
-            #optim_epochs = np.clip(np.int(10 * (indices.size / (timesteps_per_batch/num_options))),10,10) if num_options > 1 else optim_epochs
             print("optim epochs:", optim_epochs)
             logger.log("Optimizing...")
 
@@ -489,24 +516,20 @@ def learn(env, policy_func, *,
                 losses = [] # list of tuples, each of which gives the loss for a minibatch
                 for batch in d.iterate_once(optim_batchsize):
 
-                    #tadv,nodc_adv = pi.get_term_adv(batch["ob"],[opt])
+                    # Calculate advantage for using specific option here
                     tadv,nodc_adv = pi.get_opt_adv(batch["ob"],[opt])
                     tadv = tadv if num_options > 1 else np.zeros_like(tadv)
                     t_advs[opt].append(nodc_adv)
 
-                    #if (opt==1):
-                    #    *newlosses, grads = lossandgrad(batch["ob"], batch["ac"], batch["atarg"], batch["vtarg"], cur_lrmult, [opt], tadv)
-                    #else:
-                    #    *newlosses, grads = lossandgrad0(batch["ob"], batch["ac"], batch["atarg"], batch["vtarg"], cur_lrmult, [opt], tadv)
+                    # calculate the gradient
                     *newlosses, grads = lossandgrad(batch["ob"], batch["ac"], batch["atarg"], batch["vtarg"], cur_lrmult, [opt], tadv,des_pol_op_ent)
-                    #*newlosses, grads = lossandgrad(batch["ob"], batch["ac"], batch["atarg"], batch["vtarg"], cur_lrmult, [opt], tadv)
-                    #termg = termloss(batch["ob"], [opt], tadv)
-                    #adam.update(termg[0], 5e-7 * cur_lrmult) 
+
+                    # perform gradient update
                     adam.update(grads, optim_stepsize * cur_lrmult) 
                     losses.append(newlosses)
 
 
-
+        # do logging:
         lrlocal = (seg["ep_lens"], seg["ep_rets"]) # local values
         listoflrpairs = MPI.COMM_WORLD.allgather(lrlocal) # list of tuples
         lens, rews = map(flatten_lists, zip(*listoflrpairs))
