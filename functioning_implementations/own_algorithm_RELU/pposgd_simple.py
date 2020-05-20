@@ -105,7 +105,9 @@ def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,resul
         comm_penalty = 1.0
         if (option==1):
             rew = rew - comm_penalty
+        # for pendulum: comm penalty 0.0 0.5 1.0 5.0 rew scaling 1.0 0.85 0.75 0.55
         rew = rew*1.0
+
 
         rew = rew/10 if num_options > 1 else rew # To stabilize learning.
         rews[i] = rew

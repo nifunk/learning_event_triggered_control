@@ -30,7 +30,7 @@ class PendulumEnv(gym.Env):
         #self.use_noise = True 
         # Initialize a few variables:
         #self.rew_scale = kwargs['reward_scale']
-        self.rew_scale = 1.0   # 1.0 for 0.1 / 0.75 for 1.0 / 0.33 for 10.0
+        self.rew_scale = 1.0
         self.state_cost_scale = 1.0
         if (self.use_noise):
             self.obs_noise = 1e-4
@@ -51,8 +51,8 @@ class PendulumEnv(gym.Env):
         # Default cost values:
         self.c_phi = 1.0/self.state_cost_scale
         self.c_phidot = 0.1/self.state_cost_scale
-        self.c_u = 0.1/self.state_cost_scale # before lunch on 30_10 was 0.001
-        self.c_comm = 0.1   
+        self.c_u = 0.1/self.state_cost_scale
+        self.c_comm = 0.0   # comm penalty should be applied in main learning file   
 
 
     def seed(self, seed=None):
