@@ -30,6 +30,10 @@ This is a step by step instruction how to reproduce the results
 
 1. Activate your Python environment ($ conda activate ...) or similar
 
+1. Install baselines (Inside this repository):
+   1. $ cd ppoc_off_tryout/baselines
+   1. $ pip install -e .
+
 1. (recommended but not required) General Remark: The results depend on Mujoco as well as the OpenAI Gym. For me it was easiest to install both of these components from source as follows:
    1. [Gym repository](https://github.com/openai/gym), commit used: a6bbc269cf86b12778206d6ddda7097510e1328d
    1. $ cd gym
@@ -39,10 +43,6 @@ This is a step by step instruction how to reproduce the results
    1. $ pip install -e .
    1. **add the MuJoCo license**, and the mjpro150 binaries to "/.mujoco"
 
-1. Install baselines (Inside this repository):
-   1. $ cd ppoc_off_tryout/baselines
-   1. $ pip install -e .
-
 1. once all these packages are succesfully installed, go into the folder: *functioning_implementations* and choose the desired configuration that you want to train. Inside the folders are the exact instructions how to train the desired model. 
    1. The desired files have to be copied inside *ppoc_off_tryout/baselines/baselines/ppo1/*. 
    1. Then use the command from the description files. 
@@ -51,9 +51,6 @@ This is a step by step instruction how to reproduce the results
       1. as well as the best model (during trainingtime) 
       1. the model from every 50ths timestep 
       1. 2 logging files. One of them shows the evolution of the reward over time "(TRAININGNAME...results.csv)", while the other one "(TRAININGNAME...bestmodel.csv)" depicts from which epoch the current best model has been obtained
-
-1. **also the following paths have to be adapted for training**
-   1. currently, there are 2 static paths set inside the "pposgd_simple.py" file. And one inside run_mojoco.py. It is proposed to search for the appearances of "/home/nfunk/Code_MA" in both of the files and replace them with the path where the repo actually has been installed (**this is only necessary for the training, for the evaluation of the files no paths have to be adapted**) 
 
 1. **or if the models should only be evaluated**
    1. take a look at the readme inside the *eval_code* folder, how to evaluate the models
