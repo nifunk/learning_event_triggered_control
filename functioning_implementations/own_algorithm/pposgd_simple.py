@@ -200,7 +200,7 @@ def learn(env, policy_func, *,
     gamename += 'seed' + str(seed)
     gamename += app
     # This variable: "version name, defines the name of the training"
-    version_name = 'NORM-ACT-LOWER-LR-len-400-wNoise-update1-ppo-ESCH-1-4-0-nI' 
+    version_name = 'NORM-ACT-LOWER-LR-len-400-wNoise-update1-ppo-ESCH-1-1-0-nI' 
 
     dirname = '{}_{}_{}opts_saves/'.format(version_name,gamename,num_options)
     print (dirname)
