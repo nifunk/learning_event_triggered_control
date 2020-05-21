@@ -15,6 +15,3 @@ python run_visual.py --env=HalfCheetah-v2 --seed=0 --opt=2 --epoch=485 --path=PA
 ```
 
 Important: In the current implementation of the run_visual.py script, an additional adaption in the file visual.py has to be done manually. One has to change the variable "event_trigger" to True (Line 49). After useage, set this again to False. The reason is: we have to adapt the state space also incorporating the last action.
-
-
-
