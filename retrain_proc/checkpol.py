@@ -107,7 +107,7 @@ def sys_dynamics_block(val,idx,prev_layer):
 
 from maraboupy import Marabou
 
-# This function again connects the network with the system dynamics
+# This function, given the pickle file creates a file suitable for Marabou
 def build_correct():
 	# First step: load pkl file
 	f = open("NN_retrain_analysis.pkl","rb")
@@ -131,178 +131,9 @@ def build_correct():
 
 	print ("Pickle file loaded succesfully")
 
-
-
-	# ------------------------------------- TEST STANDART FUNCTIONALITY ---------------------------------------------------------
-	#REMARK: those files are not really needed in the end:
-	if (False):
-		# write and normalize NNet -> very important
-		writeNNet(weigh_list,bias_list,inMins,inMaxs,inmeans,inranges,'standart.nnet')
-		normalizeNNet('standart.nnet', 'standart.nnet')
-
-		writeNNet(prop_o0_w,prop_o0_b,inMins,inMaxs,inmeans,inranges,'standart_o0.nnet')
-		normalizeNNet('standart_o0.nnet', 'standart_o0.nnet')
-
-		writeNNet(prop_o1_w,prop_o1_b,inMins,inMaxs,inmeans,inranges,'standart_o1.nnet')
-		normalizeNNet('standart_o1.nnet', 'standart_o1.nnet')
-
-		if (False):
-			# Stuff here seems to behave as expected :)
-			# Sanity check woth the new one
-			print ("Check control network:")
-			netcheck = Marabou.read_nnet('standart.nnet')
-			cos_th = 1.0
-			sin_th = -0.07625
-			th_dot = -0.02785
-			netcheck.setLowerBound(netcheck.inputVars[0][0], cos_th)
-			netcheck.setUpperBound(netcheck.inputVars[0][0], cos_th)
-			netcheck.setLowerBound(netcheck.inputVars[0][1], sin_th)
-			netcheck.setUpperBound(netcheck.inputVars[0][1], sin_th)
-			netcheck.setLowerBound(netcheck.inputVars[0][2], th_dot)
-			netcheck.setUpperBound(netcheck.inputVars[0][2], th_dot)
-			vals1, stats1 = netcheck.solve()
-			print (inmeans)
-			input ("TOP SIMPLEST CHECK CTRL POLICY,...")
-
-			print ("Check option 0 network:")
-			netcheck = Marabou.read_nnet('standart_o0.nnet')
-			cos_th = 1.0
-			sin_th = -0.07625
-			th_dot = -0.02785
-			u_k_prev = 0.0
-			netcheck.setLowerBound(netcheck.inputVars[0][0], cos_th)
-			netcheck.setUpperBound(netcheck.inputVars[0][0], cos_th)
-			netcheck.setLowerBound(netcheck.inputVars[0][1], sin_th)
-			netcheck.setUpperBound(netcheck.inputVars[0][1], sin_th)
-			netcheck.setLowerBound(netcheck.inputVars[0][2], th_dot)
-			netcheck.setUpperBound(netcheck.inputVars[0][2], th_dot)
-			netcheck.setLowerBound(netcheck.inputVars[0][3], u_k_prev)
-			netcheck.setUpperBound(netcheck.inputVars[0][3], u_k_prev)
-			vals1, stats1 = netcheck.solve()
-			print (inmeans)
-			input ("TOP SIMPLEST CHECK o0 POLICY,...")
-
-			print ("Check option 1 network:")
-			netcheck = Marabou.read_nnet('standart_o1.nnet')
-			cos_th = 1.0
-			sin_th = -0.07625
-			th_dot = -0.02785
-			u_k_prev = 0.0
-			netcheck.setLowerBound(netcheck.inputVars[0][0], cos_th)
-			netcheck.setUpperBound(netcheck.inputVars[0][0], cos_th)
-			netcheck.setLowerBound(netcheck.inputVars[0][1], sin_th)
-			netcheck.setUpperBound(netcheck.inputVars[0][1], sin_th)
-			netcheck.setLowerBound(netcheck.inputVars[0][2], th_dot)
-			netcheck.setUpperBound(netcheck.inputVars[0][2], th_dot)
-			netcheck.setLowerBound(netcheck.inputVars[0][3], u_k_prev)
-			netcheck.setUpperBound(netcheck.inputVars[0][3], u_k_prev)
-			vals1, stats1 = netcheck.solve()
-			print (inmeans)
-			input ("TOP SIMPLEST CHECK o1 POLICY,...")
-
-
-	# ------------------------------------- END TEST STANDART FUNCTIONALITY ---------------------------------------------------------
-
-
-	# ------------------------------------- STACK THE BLOCKS ON TOP OF EACH OTHER ---------------------------------------------------------
-	# This corresponds to STAGE 1
-	layers_ctrl_pol = len(weigh_list)
-	layers_opt_0 = len(prop_o0_w)
-	layers_opt_1 = len(prop_o1_w)
-
-
-	complete_w = []
-	complete_b = []
-	len_final = (np.max([layers_ctrl_pol,layers_opt_0,layers_opt_1])) + 1 # add one final layer that everything is added
-	for i in range (len_final):
-		final_layer = False
-		if (i==len_final-1):
-			final_layer = True
-
-		# add the control policy:
-		if (i<layers_ctrl_pol):
-			ws = weigh_list[i]
-			bs = bias_list[i]
-
-		else:
-			ws,bs = default_block(bias_list[-1],final=final_layer)
-
-		# add the layer for propability of opt0
-		if (i<layers_opt_0):
-			w_to_add = prop_o0_w[i]
-			b_to_add = prop_o0_b[i]
-		else:
-			w_to_add,b_to_add = default_block(prop_o0_b[-1],final=final_layer)
-		if (i==0):
-			ws = np.concatenate((ws,w_to_add),axis=0)
-			bs = np.concatenate((bs,b_to_add),axis=0)
-		else:
-			ws,bs = special_concat(ws,w_to_add,bs,b_to_add)
-
-		# add the layer for propability of opt1
-		if (i<layers_opt_1):
-			w_to_add = prop_o1_w[i]
-			b_to_add = prop_o1_b[i]
-		else:
-			w_to_add,b_to_add = default_block(prop_o1_b[-1],final=final_layer)
-		if (i==0):
-			ws = np.concatenate((ws,w_to_add),axis=0)
-			bs = np.concatenate((bs,b_to_add),axis=0)
-		else:
-			ws,bs = special_concat(ws,w_to_add,bs,b_to_add)
-
-		# add identity layer to push everything through:
-		if (i==0):
-			#w_to_add,b_to_add = identity_block(4)
-			w_to_add,b_to_add = identity_block_denormalize(4,inranges,inmeans)
-		else:
-			# just to generate the block,...
-			#w_to_add,b_to_add = identity_block(4)
-			w_to_add,b_to_add = identity_block_denormalize(4,inranges,inmeans)
-			w_to_add,b_to_add = default_block(b_to_add,final=final_layer)
-		if (i==0):
-			ws = np.concatenate((ws,w_to_add),axis=0)
-			bs = np.concatenate((bs,b_to_add),axis=0)
-		else:
-			ws,bs = special_concat(ws,w_to_add,bs,b_to_add)
-
-
-		complete_w.append(ws)
-		complete_b.append(bs)
-		#print (np.shape(ws))
-		#print (np.shape(bs))
-		#input ("interm stop")
-
-	if os.path.exists('standart_all_stage1.nnet'):
-		os.remove('standart_all_stage1.nnet')
-	writeNNet(complete_w,complete_b,inMins,inMaxs,inmeans,inranges,'standart_all_stage1.nnet')
-	normalizeNNet('standart_all_stage1.nnet', 'standart_all_stage1.nnet')
-
-	# TEST:
-	if (False):
-		print ("Check all network:")
-		netcheck = Marabou.read_nnet('standart_all_stage1.nnet')
-		cos_th = 1.0
-		sin_th = -0.07625
-		th_dot = -0.02785
-		u_k_prev = 0.0
-		netcheck.setLowerBound(netcheck.inputVars[0][0], cos_th)
-		netcheck.setUpperBound(netcheck.inputVars[0][0], cos_th)
-		netcheck.setLowerBound(netcheck.inputVars[0][1], sin_th)
-		netcheck.setUpperBound(netcheck.inputVars[0][1], sin_th)
-		netcheck.setLowerBound(netcheck.inputVars[0][2], th_dot)
-		netcheck.setUpperBound(netcheck.inputVars[0][2], th_dot)
-		netcheck.setLowerBound(netcheck.inputVars[0][3], u_k_prev)
-		netcheck.setUpperBound(netcheck.inputVars[0][3], u_k_prev)
-		vals1, stats1 = netcheck.solve()
-		input ("TOP SIMPLEST CHECK all,...")
-
-	# ------------------------------------- END STACK THE BLOCKS ON TOP OF EACH OTHER ---------------------------------------------------------
-
-
-
 	# ------------------------------------- STACK THE BLOCKS ON TOP OF EACH OTHER ALSO ADD SYS DYN---------------------------------------------------------
-	# This is now Stage 1 and 2 combined
+
+	# First stack the blocks on top of each other that have been obtained through the exportpol function:
 	layers_ctrl_pol = len(weigh_list)
 	layers_opt_0 = len(prop_o0_w)
 	layers_opt_1 = len(prop_o1_w)
@@ -350,11 +181,8 @@ def build_correct():
 
 		# add identity layer to push everything through:
 		if (i==0):
-			#w_to_add,b_to_add = identity_block(4)
 			w_to_add,b_to_add = identity_block_denormalize(4,inranges,inmeans)
 		else:
-			# just to generate the block,...
-			#w_to_add,b_to_add = identity_block(4)
 			w_to_add,b_to_add = identity_block_denormalize(4,inranges,inmeans)
 			w_to_add,b_to_add = default_block(b_to_add,final=final_layer)
 		if (i==0):
@@ -364,7 +192,8 @@ def build_correct():
 			ws,bs = special_concat(ws,w_to_add,bs,b_to_add)
 
 		if (final_layer):
-			# now add the evolution of the system dynamics:
+			# now add the evolution of the system dynamics if we are in the last layer
+			# -> linearly combine the available outputs:
 			ang_dyn = []
 			ang_dyn.append(1.01881)
 			ang_dyn.append(0.0503131)
@@ -382,9 +211,7 @@ def build_correct():
 
 			# To add: next angle and next angvel when using the control policy:
 			w_to_add, b_to_add = sys_dynamics_block(ang_dyn,idx,complete_w[-1])
-			#print (np.shape(ws))
-			#print (np.shape(w_to_add))
-			#input ("WAIT")
+
 			ws = np.concatenate((ws,w_to_add),axis=0)
 			bs = np.concatenate((bs,b_to_add),axis=0)
 			w_to_add, b_to_add = sys_dynamics_block(ang_vel_dyn,idx,complete_w[-1])
@@ -433,30 +260,12 @@ def build_correct():
 	writeNNet(complete_w,complete_b,inMins,inMaxs,inmeans,inranges,'standart_all_comp.nnet')
 	normalizeNNet('standart_all_comp.nnet', 'standart_all_comp.nnet')
 
-	# TEST:
-	if (False):
-		print ("Check all network:")
-		netcheck = Marabou.read_nnet('standart_all.nnet')
-		cos_th = 1.0
-		sin_th = 0.0#-0.07625
-		th_dot = 0.0#-0.02785
-		u_k_prev = 0.0
-		netcheck.setLowerBound(netcheck.inputVars[0][0], cos_th)
-		netcheck.setUpperBound(netcheck.inputVars[0][0], cos_th)
-		netcheck.setLowerBound(netcheck.inputVars[0][1], sin_th)
-		netcheck.setUpperBound(netcheck.inputVars[0][1], sin_th)
-		netcheck.setLowerBound(netcheck.inputVars[0][2], th_dot)
-		netcheck.setUpperBound(netcheck.inputVars[0][2], th_dot)
-		netcheck.setLowerBound(netcheck.inputVars[0][3], u_k_prev)
-		netcheck.setUpperBound(netcheck.inputVars[0][3], u_k_prev)
-		vals1, stats1 = netcheck.solve()
-		input ("TOP SIMPLEST CHECK COMPLETE...")
 
 	print ("Completed rewriting")
 
 
 def input_check(ang,angvel,file):
-	# This file should simplify to accound all the input stuff already:
+	# This file should simplify the check and already set some of the variables:
 	netcheck = Marabou.read_nnet(file)
 	# cos th: we assume this to be always 1.0
 	netcheck.setLowerBound(netcheck.inputVars[0][0], 1.0)
@@ -474,7 +283,7 @@ def input_check(ang,angvel,file):
 	return netcheck
 
 def try_to_find_input_check(ang,angvel,file):
-	# This file should simplify to accound all the input stuff already:
+	# This file should simplify the check for an admissible input and already set some of the variables
 	netcheck = Marabou.read_nnet(file)
 	# cos th: we assume this to be always 1.0
 	netcheck.setLowerBound(netcheck.inputVars[0][0], 1.0)
@@ -492,7 +301,7 @@ def try_to_find_input_check(ang,angvel,file):
 	return netcheck
 
 def try_to_find_input_comp_check(ang,angvel,uk,file):
-	# This file should simplify to accound all the input stuff already:
+	# This file should simplify the check
 	netcheck = Marabou.read_nnet(file)
 	# cos th: we assume this to be always 1.0
 	netcheck.setLowerBound(netcheck.inputVars[0][0], 1.0)
@@ -509,7 +318,7 @@ def try_to_find_input_comp_check(ang,angvel,uk,file):
 
 	return netcheck
 
-# this function checks the network for stability
+# this function checks the network for overall stability
 def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	unsuccessful_points = []
 
@@ -517,7 +326,6 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	if (True):
 		# Before starting make the etreme check:
 		netcheck = try_to_find_input_check(ang,angvel,nnet_file_name)
-		#netcheck.setUpperBound(netcheck.outputVars[0][11],0.0)
 		netcheck.setLowerBound(netcheck.outputVars[0][7],-ang_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
@@ -525,12 +333,11 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		vals1, stats1 = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
-			# if not capable of solving this problem it will never work,...
+			# if recovering from the most extreme state is not possible this will never work -> QUIT
 			input("BEGINNING: (POS) IT IS IMPOSSIBLE TO SOLVE THIS PROBLEM")
 
 		# Before starting make the etreme check to the other direction
 		netcheck = try_to_find_input_check(-ang,-angvel,nnet_file_name)
-		#netcheck.setUpperBound(netcheck.outputVars[0][11],0.0)
 		netcheck.setLowerBound(netcheck.outputVars[0][7],-ang_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
@@ -538,7 +345,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		vals1, stats1 = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
-			# if not capable of solving this problem it will never work,...
+			# if recovering from the most extreme state is not possible this will never work -> QUIT
 			input("BEGINNING: (NEG) IT IS IMPOSSIBLE TO SOLVE THIS PROBLEM")
 
 	ang_lb_comm = False
@@ -564,9 +371,9 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	else:
 		print ("left bound unsafe for no communication")
 		# try to find input that recovers system
+		# if recovering is needed -> next state has to be in the save range
 		rem = vals1[3] #this is the old action
 		netcheck = try_to_find_input_check(vals1[1],vals1[2],nnet_file_name)
-		#netcheck.setLowerBound(netcheck.outputVars[0][11],0.0)
 		netcheck.setLowerBound(netcheck.outputVars[0][7],-ang_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
@@ -574,7 +381,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		vals1, stats1 = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
-			# if not capable of solving this problem it will never work,...
+			# if recovering is not possible this will never work -> QUIT
 			input("IT IS IMPOSSIBLE TO SOLVE THIS PROBLEM")
 		else:
 			vals1[4] = rem
@@ -592,9 +399,9 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	else:
 		print ("left bound unsafe for communication")
 		# try to find new control action recovering the system
+		# if recovering is needed -> next state has to be in the save range
 		rem = vals1[3] #this is the old action
 		netcheck = try_to_find_input_check(vals1[1],vals1[2],nnet_file_name)
-		#netcheck.setUpperBound(netcheck.outputVars[0][11],0.0)
 		netcheck.setLowerBound(netcheck.outputVars[0][7],-ang_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
@@ -603,13 +410,10 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		time.sleep(5.0)
 		del netcheck
 		if (vals1=={}):
-			# if not capable of solving this problem it will never work,...
+			# if recovering is not possible this will never work -> QUIT
 			input("IT IS IMPOSSIBLE TO SOLVE THIS PROBLEM")
 		else:
 			vals1[4] = rem
-			#print (vals1[3])
-			#print (vals1[4])
-			#input ("SCHDOOP")
 			unsuccessful_points.append(vals1)
 
 
@@ -627,7 +431,6 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		print ("right bound unsafe for no communication")
 		rem = vals1[3]
 		netcheck = try_to_find_input_check(vals1[1],vals1[2],nnet_file_name)
-		#netcheck.setLowerBound(netcheck.outputVars[0][11],0.0)
 		netcheck.setLowerBound(netcheck.outputVars[0][7],-ang_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
@@ -635,7 +438,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		vals1, stats1 = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
-			# if not capable of solving this problem it will never work,...
+			# if recovering is not possible this will never work -> QUIT
 			input("IT IS IMPOSSIBLE TO SOLVE THIS PROBLEM")
 		else:
 			vals1[4] = rem
@@ -655,7 +458,6 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		print ("right bound unsafe for communication")
 		rem = vals1[3]
 		netcheck = try_to_find_input_check(vals1[1],vals1[2],nnet_file_name)
-		#netcheck.setUpperBound(netcheck.outputVars[0][11],0.0)
 		netcheck.setLowerBound(netcheck.outputVars[0][7],-ang_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
@@ -663,7 +465,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		vals1, stats1 = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
-			# if not capable of solving this problem it will never work,...
+			# if recovering is not possible this will never work -> QUIT
 			input("IT IS IMPOSSIBLE TO SOLVE THIS PROBLEM")
 		else:
 			vals1[4] = rem
@@ -684,7 +486,6 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		print ("bottom bound unsafe for no communication")
 		rem = vals1[3]
 		netcheck = try_to_find_input_check(vals1[1],vals1[2],nnet_file_name)
-		#netcheck.setLowerBound(netcheck.outputVars[0][11],0.0)
 		netcheck.setLowerBound(netcheck.outputVars[0][7],-ang_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
@@ -692,7 +493,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		vals1, stats1 = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
-			# if not capable of solving this problem it will never work,...
+			# if recovering is not possible this will never work -> QUIT
 			input("IT IS IMPOSSIBLE TO SOLVE THIS PROBLEM")
 		else:
 			vals1[4] = rem
@@ -712,7 +513,6 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		print ("bottom bound unsafe for communication")
 		rem = vals1[3]
 		netcheck = try_to_find_input_check(vals1[1],vals1[2],nnet_file_name)
-		#netcheck.setUpperBound(netcheck.outputVars[0][11],0.0)
 		netcheck.setLowerBound(netcheck.outputVars[0][7],-ang_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
@@ -720,7 +520,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		vals1, stats1 = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
-			# if not capable of solving this problem it will never work,...
+			# if recovering is not possible this will never work -> QUIT
 			input("IT IS IMPOSSIBLE TO SOLVE THIS PROBLEM")
 		else:
 			vals1[4] = rem
@@ -741,7 +541,6 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		print ("top bound unsafe for no communication")
 		netcheck = try_to_find_input_check(vals1[1],vals1[2],nnet_file_name)
 		rem = vals1[3]
-		#netcheck.setLowerBound(netcheck.outputVars[0][11],0.0)
 		netcheck.setLowerBound(netcheck.outputVars[0][7],-ang_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
@@ -749,7 +548,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		vals1, stats1 = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
-			# if not capable of solving this problem it will never work,...
+			# if recovering is not possible this will never work -> QUIT
 			input("IT IS IMPOSSIBLE TO SOLVE THIS PROBLEM")
 		else:
 			vals1[4] = rem
@@ -769,7 +568,6 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		print ("top bound unsafe for communication")
 		rem = vals1[3]
 		netcheck = try_to_find_input_check(vals1[1],vals1[2],nnet_file_name)
-		#netcheck.setUpperBound(netcheck.outputVars[0][11],0.0)
 		netcheck.setLowerBound(netcheck.outputVars[0][7],-ang_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
@@ -777,7 +575,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		vals1, stats1 = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
-			# if not capable of solving this problem it will never work,...
+			# if recovering is not possible this will never work -> QUIT
 			input("IT IS IMPOSSIBLE TO SOLVE THIS PROBLEM")
 		else:
 			vals1[4] = rem
@@ -830,9 +628,7 @@ def check_whole_comp_comm_eff(nnet_file_name,ang,ang_save,angvel,angvel_save,uk,
 
 		return True,[]
 	else:
-		#input ("WAIT")
 		netcheck = try_to_find_input_check(ang,angvel,nnet_file_name)
-		#netcheck.setLowerBound(netcheck.outputVars[0][11],0.0)
 		netcheck.setLowerBound(netcheck.outputVars[0][7],-ang_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
@@ -840,7 +636,7 @@ def check_whole_comp_comm_eff(nnet_file_name,ang,ang_save,angvel,angvel_save,uk,
 		vals1, stats1 = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
-			# if not capable of solving this problem it will never work,...
+			# if recovering is not possible this will never work -> QUIT
 			print (ang)
 			print (angvel)
 			input ("IT IS IMPOSSIBLE TO SOLVE THIS PROBLEM")

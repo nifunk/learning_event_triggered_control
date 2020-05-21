@@ -19,6 +19,9 @@ from gym import spaces
 from utils.writeNNet import writeNNet
 
 
+# purpose of this function: read the values of the NN and export them to a pickle file
+# this pickle file can be later used in line with the Marabou framework
+
 def do_export(yolo,env,pi):
     weigh_list = [] # this denotes the weights of the policy (control policy!)
     bias_list = []  # this denotes the bias of the control policy
@@ -27,10 +30,11 @@ def do_export(yolo,env,pi):
     pol_ov_opt_w_1 = [] # weights for propability of choosing opt 1
     pol_ov_opt_b_1 = []
 
-
+    # read all the parameters:
     for v in yolo:
         if ('pol' in v.name):
             if ('final' in v.name):
+                # in the final layer once store the weights and then (-1)*weights
                 abc = tf.transpose(v[1,:,:]).eval()
                 abc = np.concatenate((abc,-1*abc),axis=0)
                 weigh_list.append(abc)
@@ -47,7 +51,6 @@ def do_export(yolo,env,pi):
                 if ('w' in v.name):
                     # here we are dealing with weights
                     abc = tf.transpose(v).eval()
-                    #abc = abc[:32,:]
                     abc = np.concatenate((abc,-1*abc),axis=0)
 
                     if ('f0' in v.name):
@@ -58,7 +61,6 @@ def do_export(yolo,env,pi):
                 else:
                     # here we are dealing with bias
                     abc = tf.transpose(v).eval()
-                    #abc = abc[:32]
                     abc = np.concatenate((abc,-1*abc),axis=0)
 
                     if ('f0' in v.name):
@@ -70,7 +72,6 @@ def do_export(yolo,env,pi):
                 if ('w' in v.name):
                     # here we are dealing with weights
                     abc = tf.transpose(v).eval()
-                    #abc = abc[:32,:]
                     if ('i0' in v.name):
                         pol_ov_opt_w_0.append(abc)
                     else:

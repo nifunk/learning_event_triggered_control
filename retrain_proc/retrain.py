@@ -42,7 +42,7 @@ def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,resul
     ep_lens = [] # lengths of ...
 
     # Initialize history arrays
-    horizon = 500 #500
+    horizon = 500 
     obs = np.array([ob for _ in range(horizon)])
     rews = np.zeros(horizon, 'float32')
     realrews = np.zeros(horizon, 'float32')
@@ -59,21 +59,20 @@ def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,resul
     # load the previously exported file:
     nnet_file_name = 'standart_all_comp.nnet'
     # define the angular range and the safe angular range
-    ang = 1*2.5*0.0174533 #1.0*0.0174533 # was 3.5 # 7.5 and 1.5 works!!!
+    #for the retraining if a point is unstable it has to be in the safe range
+    ang = 1*2.5*0.0174533 
     ang_save = ang - 0.0001
     # define the angular velocity and the safe angular velocity range
-    angvel = 1*5.0*0.0174533 #2.0*0.0174533 # was 3
+    angvel = 1*5.0*0.0174533
     angvel_save = angvel - 0.0001
 
     while True:
-        #if (t==horizon):
         if (t>0):
             yield {"ob" : obs, "rew" : rews, "realrew": realrews, "vpred" : vpreds, "new" : news,
                 "ac" : acs, "opts" : opts, "opts_val" : opts_val, "incorrect" : incorrect, "wrong_checks" : wrong_checks}
         t = 0
-        # first do the check:
+        # first do the overall check:
         unsucess = check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save)
-        #unsucess = []
         if (True):
             if (len(unsucess)==0):
                 print ("YES WE DID IT -> CONVERGENCE WAS REACHED!")
@@ -90,24 +89,9 @@ def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,resul
 
         sample = None
 
-        # idea was here to sample locally around unsuccesfull points:
-        num_local_samples = 0#50
-        if not(num_local_samples==0):
-            for i in range(len(unsucess)):
-                sample_new = np.random.uniform(low=-1.0, high=1.0, size=(num_local_samples,4))
-                sample_new[:,0] = 1.0
-                #sample_new[:,1] = np.clip(unsucess[i][1] + sample_new[:,1]*0.0174533,-ang,ang)
-                sample_new[:,1] = np.clip(unsucess[i][1] + sample_new[:,1]*0.0,-ang,ang)
-                #sample_new[:,2] = np.clip(unsucess[i][2] + sample_new[:,2]*2*0.0174533,-angvel,angvel)
-                sample_new[:,2] = np.clip(unsucess[i][2] + sample_new[:,2]*0.0,-angvel,angvel)
-                #sample_new[:,3] = np.clip(unsucess[i][3] + sample_new[:,2]*0.2,-1.0,1.0)
-                sample_new[:,3] = np.clip(unsucess[i][3] + sample_new[:,2]*0.0,-1.0,1.0)
-                if (sample is None):
-                    sample = sample_new
-                else:
-                    sample = np.concatenate((sample,sample_new))
+        num_local_samples = 0#
         
-        # generate additional points globally using Sobol sequences
+        # generate additional points using Sobol sequences
         size_to_gen = (horizon-(num_local_samples+1)*len(unsucess))
         if (True):
             # using sobol
@@ -141,11 +125,11 @@ def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,resul
 
             if (corr):
                 if (point=="no_comm_also_works"):
-                    # special case: option 0 also works
+                    # special case: saving communication also works -> we want this label
                     obs[t] = [sample[i,0],sample[i,1],sample[i,2],sample[i,3]]
                     acs[t] = sample[i,3]
                     incorrect[t] = 1
-                    opts_val[t] = 0.4#0.1 # make this less as not so important
+                    opts_val[t] = 0.4
                     opts[t] = 0
                     no_comm_samples += 1
                 else:
@@ -154,12 +138,13 @@ def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,resul
                     acs[t] = sample[i,3]
                     incorrect[t] = 0
                     if (dec>0):
-                        # this means no communication: assign value of 0.25
+                        # this means we skip communication: 
                         opts_val[t] = 0.4
                         no_comm_samples += 1
                         opts[t] = 0
                     else:
-                        # for case of communication assign -2 -> important that this value is kept
+                        # for case of communication assign value of -2
+                        # -> this case is more important compared to saving communication,...
                         opts_val[t] = -2.0
                         opts[t] = 1
                     
@@ -263,16 +248,13 @@ def learn(env, policy_func, *,
 
     ac = pi.pdtype.sample_placeholder([None])
 
-    # fuer den op pi loss muss no was andres her
+
     ac_nn = pi.ac_mean
-    #ac_nn =tf.Print(ac_nn,[ac_nn,ac_nn-ac_super])
     op_pi_nn = pi.op_pi_orig
     op_pi_nn = tf.reshape(op_pi_nn,[-1])
-    #op_pi_super = tf.reshape(op_pi_super,[1,-1])
-    #op_pi_nn = tf.Print(op_pi_nn,[tf.math.sigmoid(5*(tf.math.abs(op_pi_nn-op_pi_super)-0.5)),(op_pi_nn-op_pi_super)])
 
     # only influence the policy over options
-    # use a sigmoid weight to ensure, e.g. if the label is 60% but we use 100% this is also fine,..
+    # use a sigmoid weight to ensure, e.g. if the label is 60% but we use 100% this is also fine and should not be taken inside the loss function
     total_loss00 = tf.reduce_sum(tf.square(tf.math.sigmoid(5*(tf.math.abs(tf.stop_gradient(op_pi_nn)-op_pi_super)-0.5))*(op_pi_nn-op_pi_super)))
     # only affects the control action for the completely wrongly labelled point
     total_loss01 = tf.reduce_sum(tf.square(10*(ac_nn-ac_super)))
@@ -310,7 +292,6 @@ def learn(env, policy_func, *,
         for opt in range(num_options): out += ',option {} adv'.format(opt)
         out+='\n'
         results.write(out)
-        # results.write('epoch,avg_reward,option 1 dur, option 2 dur, option 1 term, option 2 term\n')
         results.flush()
 
     if epoch >= 0:
@@ -324,7 +305,7 @@ def learn(env, policy_func, *,
     
 
 
-    epoch = 0 #directly reset the epoch to 0!!!
+    epoch = 0
     episodes_so_far = 0
     timesteps_so_far = 0
     global iters_so_far
@@ -384,7 +365,7 @@ def learn(env, policy_func, *,
             save_path = saver.save(U.get_session(),filename)
 
             indices_incorrect = np.where(incorrect==1)[0]
-            #if (np.shape(indices_incorrect)[0]==0):
+
             if (wrong_checks[0]==0):
                 # there are no more incorrect results -> we are finished :)
                 input ("----------FINISHED------------")
@@ -426,7 +407,6 @@ def learn(env, policy_func, *,
 
             # Here we do a bunch of optimization epochs over the data
             print ("OPTION IS: " + str(opt))
-            #for _ in range(optim_epochs):
             curr_iter = 0
             while (True):
                 curr_iter += 1
@@ -448,16 +428,13 @@ def learn(env, policy_func, *,
                 
                 # different terminating conditions of the optimization depending on the option
                 if (opt==0):
-                    #print (np.mean(loss_opt_0))
                     if (curr_iter > 100):
                         break
+                # more adaptive termination for refining the control action to be taken
                 if (opt==1):
                     if ((np.mean(temp_loss)<0.01 and curr_iter>=100) or np.mean(temp_loss)<0.001 or curr_iter>500):
-                        #time.sleep(1.0)
                         break
-                    # more adaptive way of approaching:
                     if ((np.mean(temp_loss)<0.01 and curr_iter>=5000) or np.mean(temp_loss)<0.0001 or curr_iter>50000):
-                        #time.sleep(1.0)
                         break
 
 
@@ -468,7 +445,6 @@ def learn(env, policy_func, *,
         if MPI.COMM_WORLD.Get_rank()==0:
             logger.dump_tabular()
 
-        #input ("SCHDOOOP")
         ### Book keeping
         if saves:
             out = "{},{}"

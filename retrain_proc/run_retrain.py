@@ -18,7 +18,7 @@ def train(env_id, num_timesteps, seed, num_options,app, saves ,wsaves, epoch,dc,
     set_global_seeds(seed)
     episode_len = 400
     from gym.envs.registration import register
-    # add the current path to the repo -> we are loading exactly the repo it has been trained on!!!
+    # add the current path to the repo -> we are loading exactly the repo it has been trained on
     sys.path.append(path)
     print(sys.path)
     from src_code import mlp_policy
