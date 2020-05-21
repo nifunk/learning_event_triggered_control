@@ -24,15 +24,16 @@ If you use this code, please kindly cite the publication **TODO: INSERT PUBLICAT
 
 1. Install the required packages.
    1. If conda has been installed, inside  *z_various_stuff/conda_env* there is the conda_env.yml file which can be used to obtain all the required packages. Thus, execute 
-   ```setup 
-   conda env create -f conda_env.yml 
-   ```
-   2. Otherwise, make sure that your python environment you want to use contains the packages depicted in the yaml file
+      ```setup 
+      conda env create -f conda_env.yml 
+      ```
+   1. Otherwise, make sure that your python environment you want to use contains the packages depicted in the yaml file
 
 1. Activate your Python environment. If conda has been used:
-```setup 
-conda activate jl_etc
-```
+   ```setup 
+   conda activate jl_etc
+   ```
+
 1. Install the components of this repository:
    ```setup 
    cd PATH_TO_THIS_REPO/baselines
