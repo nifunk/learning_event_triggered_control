@@ -2,18 +2,6 @@
 
 This repository is the official implementation of [Joint Learning of Event-triggered Control and Communication Policies]() **TODO: insert Link of publication** by N. Funk, D. Baumann, V. Berenz and S. Trimpe. Additional video material depicting the performance of the trained models can accesssed [here](https://sites.google.com/view/learn-event-triggered-control).
 
-## Credits
-
-This repository is based on previous work:
-
-It contains parts of the [OpenAI baselines repository](https://github.com/openai/baselines) inside the folder **baselines**. Inside this folder you can also find the corresponding license.
-
-The implementation of our proposed hierarchical reinforcement learning algorithm is based on prior work by Martin Klissarov et. al and their [PPOC repository](https://github.com/mklissa/PPOC).
-
-For the stability verification algorithm we use parts from the [NNet repository](https://github.com/sisl/NNet). The license, as well as the files that we use from this repo are placed in the folder **retrain_proc/utils**.
-
-If you use this code, please kindly cite the publication **TODO: INSERT PUBLICATION!!!**
-
 ## Requirements 
 
 ### For Training and Evaluating models on the Pendulum / Highdimensional environments
@@ -137,6 +125,18 @@ Short overview over the repo:
   * it also contains a folder called modified_ant_env. Inside this folder are the instructions how to add the modified Ant environment (called Antnff-v8) to the OpenAI gym implementations
 
 While for the most part, the repo is self-contained, a prerequisite for using the retraining is the successfull installation of Marabou. Further, a MuJoCo licence is required for the experiments in higher dimensions.
+
+## Credits
+
+This repository is based on previous work:
+
+It contains parts of the [OpenAI baselines repository](https://github.com/openai/baselines) inside the folder **baselines**. Inside this folder you can also find the corresponding license.
+
+The implementation of our proposed hierarchical reinforcement learning algorithm is based on prior work by Martin Klissarov et. al and their [PPOC repository](https://github.com/mklissa/PPOC).
+
+For the stability verification algorithm we use parts from the [NNet repository](https://github.com/sisl/NNet). The license, as well as the files that we use from this repo are placed in the folder **retrain_proc/utils**.
+
+If you use this code, please kindly cite the publication **TODO: INSERT PUBLICATION!!!**
 
 ## Copyright
 
