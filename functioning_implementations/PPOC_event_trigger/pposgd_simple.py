@@ -236,8 +236,6 @@ def learn(env, policy_func, *,
     atarg = tf.placeholder(dtype=tf.float32, shape=[None]) # Target advantage function (if applicable)
     ret = tf.placeholder(dtype=tf.float32, shape=[None]) # Empirical return
 
-    # option = tf.placeholder(dtype=tf.int32, shape=[None])
-
     lrmult = tf.placeholder(name='lrmult', dtype=tf.float32, shape=[]) # learning rate multiplier, updated with schedule
     clip_param = clip_param * lrmult # Annealed cliping parameter epislon
 
@@ -307,7 +305,6 @@ def learn(env, policy_func, *,
         for opt in range(num_options): out += ',option {} adv'.format(opt)
         out+='\n'
         results.write(out)
-        # results.write('epoch,avg_reward,option 1 dur, option 2 dur, option 1 term, option 2 term\n')
         results.flush()
 
     if epoch >= 0:
