@@ -1,8 +1,6 @@
 # Joint Learning of Event-triggered Control and Communication Policies
 
-This repository contains the code concerning the publication "Joint Learning of Event-triggered Control and Communication Policies" by N. Funk, D. Baumann, V. Berenz and S. Trimpe. 
-
-In this publication, we present a framework for model-free learning of event-triggered communication and control policies from data. Event-triggered methods are essential to realize the potential of future networked control systems, where feedback loops are closed over wireless networks, and communication thus becomes a scarce resource. The learning approach jointly optimizes communication and control policy, which is required since the separation principle does not hold in general for event-triggered control, and can be applied to nonlinear and high-dimensional systems, as we demonstrate in challenging simulation examples. Further, we show in practical experiments on a robotic system that the method is also applicable to real-world systems and present an approach towards checking the stability of joint control and communication policies represented by deep neural networks.
+This repository is the official implementation of [Joint Learning of Event-triggered Control and Communication Policies]() **TODO: insert Link of publication** by N. Funk, D. Baumann, V. Berenz and S. Trimpe. Additional video material depicting the performance of the trained models can accesssed [here](https://sites.google.com/view/learn-event-triggered-control).
 
 ## Credits
 
@@ -16,16 +14,19 @@ For the stability verification algorithm we use parts from the [NNet repository]
 
 If you use this code, please kindly cite the publication **TODO: INSERT PUBLICATION!!!**
 
-## Reproducing the results on the Pendulum / Highdimensional environments
+## Requirements 
 
-This is a step by step instruction how to reproduce the results
+### For Reproducing the Results on the Pendulum / Highdimensional environments
 
 1. (recommended but not required) Install [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/), using Python 3 or higher. 
 
 1. Clone the repo
 
 1. Install the required packages.
-   1. If conda has been installed, inside  *z_various_stuff/conda_env* there is the conda_env.yml file which can be used to obtain all the required packages (using $ conda env create -f conda_env.yml )
+   1. If conda has been installed, inside  *z_various_stuff/conda_env* there is the conda_env.yml file which can be used to obtain all the required packages. Thus, execute 
+ '''
+conda env create -f conda_env.yml
+'''
    1. Otherwise, make sure that your python environment you want to use contains the packages depicted in the yaml file
 
 1. Activate your Python environment ($ conda activate ...) or similar
