@@ -43,12 +43,26 @@ If you use this code, please kindly cite the publication **TODO: INSERT PUBLICAT
    ```
 
 1. (recommended but not required) General Remark: The results depend on Mujoco as well as the OpenAI Gym. For me it was easiest to install both of these components from source as follows:
-   1. [Gym repository](https://github.com/openai/gym), commit used: a6bbc269cf86b12778206d6ddda7097510e1328d
-   1. $ cd gym
-   1. $ pip install -e .
-   1. [Mujoco-py repository](https://github.com/openai/mujoco-py), commit used: 1452b3629da92c5f9227430f5e79788db8ef0b71
-   1. $ cd mujoco-py
-   1. $ pip install -e .
+   1. Clone the [Gym repository](https://github.com/openai/gym), commit used: a6bbc269cf86b12778206d6ddda7097510e1328d
+         ```setup 
+         cd gym
+         ```
+         ```setup 
+         git checkout a6bbc269cf86b12778206d6ddda7097510e1328d
+         ```
+         ```setup 
+         pip install -e .
+         ```
+   1. Clone [Mujoco-py repository](https://github.com/openai/mujoco-py), commit used: 452b3629da92c5f9227430f5e79788db8ef0b71
+         ```setup 
+         cd mujoco-py
+         ```
+         ```setup 
+         git checkout 1452b3629da92c5f9227430f5e79788db8ef0b71
+         ```
+         ```setup 
+         pip install -e .
+         ```
    1. **add the MuJoCo license**, and the mjpro150 binaries to "/.mujoco"
 
 1. once all these packages are succesfully installed, go into the folder: *functioning_implementations* and choose the desired configuration that you want to train. Inside the folders are the exact instructions how to train the desired model. 
