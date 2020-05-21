@@ -111,8 +111,7 @@ class MlpPolicy(object):
         # determine the control action to be applied. In case of ZOH == opt 0 just use u[k-1]
         ac = U.switch(option[0], ac, tf.stop_gradient(ob[:,-self.ac_space_dim:]))
         ac = tf.clip_by_value(ac,-1.0,1.0)
-        #ac = U.switch(option[0], tf.constant(1.0), tf.constant(0.0))
-        #ac = tf.Print (ac, [ac], "action after selection: ")
+
         self.last_action = tf.stop_gradient(ac)
         self._act = U.function([stochastic, ob, option], [ac, self.vpred, last_out, logstd])
 

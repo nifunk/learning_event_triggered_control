@@ -123,9 +123,6 @@ def traj_segment_generator(pi, env, horizon, stochastic, num_options,saves,resul
         optpol_p.append(pi._get_op([ob])[0][0])
         value_val.append(v_val)
         term = pi.get_term([ob],[option])[0][0]
-        #input ("Terminated???")
-        #print (term)
-        ###
 
         # in case of termination, decide which option to execute next:
         if term:            
@@ -235,6 +232,10 @@ def learn(env, policy_func, *,
         # brute force copy normal env file at end of copying process:
         src = os.path.join(dirname_rel,'nfunk/envs_nf/pendulum_nf.py')          
         shutil.copy2(src,dest)
+        shutil.copy2(src,dest)
+        os.makedirs(dest+"assets/")
+        src = os.path.join(dirname_rel,'nfunk/envs_nf/assets/clockwise.png')
+        shutil.copy2(src,dest+"assets/")
     ###
 
 
@@ -294,7 +295,6 @@ def learn(env, policy_func, *,
 
     # calculate logarithm of propability of policy over options
     log_pi = tf.log(tf.clip_by_value(pi.op_pi, 1e-5, 1.0))
-    #log_pi = tf.Print(log_pi, [log_pi, tf.shape(tf.transpose(log_pi))])
     # calculate logarithm of propability of policy over options old parameter
     old_log_pi = tf.log(tf.clip_by_value(oldpi.op_pi, 1e-5, 1.0))
     # calculate entropy of policy over options
@@ -353,7 +353,6 @@ def learn(env, policy_func, *,
         for opt in range(num_options): out += ',option {} adv'.format(opt)
         out+='\n'
         results.write(out)
-        # results.write('epoch,avg_reward,option 1 dur, option 2 dur, option 1 term, option 2 term\n')
         results.flush()
 
     # speciality: if running the training with epoch argument -> a model is loaded
