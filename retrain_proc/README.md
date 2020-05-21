@@ -10,7 +10,7 @@ It is important that for using this retraining procedure one can only use polici
 
 1. After the training has finished, inside the folder *name_of_training/src_code* replace the original *mlp_policy.py* file with the one provided in *example/mlp_policy.py*
 
-1. Exemplary command to then start the retraining procedure (with the model from epoch 500)
+1. Exemplary command to then start the retraining procedure (e.g., with the model from epoch 500)
 	```setup
 	python run_retrain.py --opt 2 --seed 0 --app savename --epoch 500 --path=PATH_TO_RESULTS_FOLDER --env Pendulumnf-v0
 	```
