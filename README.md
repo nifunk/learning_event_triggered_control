@@ -23,7 +23,7 @@ If you use this code, please kindly cite the publication **TODO: INSERT PUBLICAT
 1. Clone the repo
 
 1. Install the required packages.
-   1. If conda has been installed, inside  *z_various_stuff/conda_env* there is the conda_env.yml file which can be used to obtain all the required packages. Thus, execute 
+   1. If conda has been installed, inside  *z_additionals/conda_env* there is the conda_env.yml file which can be used to obtain all the required packages. Thus, execute 
       ```setup 
       conda env create -f conda_env.yml 
       ```
@@ -127,7 +127,7 @@ Short overview over the repo:
 * **nfunk** folder contains the customized gym environments (especially the Pendulum environment), helper functions needed for the baselines package and the implementation of LQR agents
 * **retrain_proc** folder contains the files required for retraining NN policies
 * **functioning implementations** folder contains all the source files and cluster launching scrips for the different implemented policies
-* **z_various_stuff** contains several files:
+* **z_additionals** contains several files:
   * the exported conda environments, required to reproduce the results 
   * it also contains a folder called modified_ant_env. Inside this folder are the instructions how to add the modified Ant environment (called Antnff-v8) to the OpenAI gym implementations
 
