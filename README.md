@@ -78,18 +78,31 @@ If you use this code, please kindly cite the publication **TODO: INSERT PUBLICAT
    1. take a look at the readme inside the *eval_code* folder, how to evaluate the models
 
 
-## Reproducing the results for the Stability Analysis
+### For Reproducing the results for the Stability Analysis
 
 Perform the steps, exactly as described above.
-Further, instead of using the conda_env.yml; use the yaml: verification_env.yml
+Further, instead of using the conda_env.yml; use the yaml: verification_env.yml. The conda environment is called mujoco-veri instead of jl_etc
 
 **In addition to the previously presented steps, we also have to install Marabou:**
-* [Marabou repository](https://github.com/NeuralNetworkVerification/Marabou), commit used: 9a40623e2cff35c4a2adcad1217ff0741817ceee
-* $ cd Marabou
-* $ mkdir build
-* $ cd build
-* $ cmake .. -DBUILD_PYTHON=ON
-* $ cmake --build .
+* Clone [Marabou repository](https://github.com/NeuralNetworkVerification/Marabou), commit used: 9a40623e2cff35c4a2adcad1217ff0741817ceee
+   ```setup 
+   cd Marabou
+   ```
+   ```setup 
+   git checkout 9a40623e2cff35c4a2adcad1217ff0741817ceee
+   ```
+   ```setup 
+   mkdir build
+   ```
+   ```setup 
+   cd build
+   ```
+   ```setup 
+   cmake .. -DBUILD_PYTHON=ON
+   ```
+   ```setup 
+   cmake --build .
+   ```
 * *Remark:* On Ubuntu 14.04 these instructions worked directly as described here. However, on Ubuntu 16.04 I had trouble as the building process failed due to an error of Asan. In order to circumvent the error, I simply set option(RUN_MEMORY_TEST "run cxxtest testing with ASAN ON" OFF) to off in the CMakeLists, then the commands also worked as described.
 * **Important:** for the framework to work, the path to Marabou has to be set correctly in the "checkpol.py" file
 * The instructions how to launch the retraining are contained in the folders **retrain_proc**
