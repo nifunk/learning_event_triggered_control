@@ -33,7 +33,6 @@ If you use this code, please kindly cite the publication **TODO: INSERT PUBLICAT
 ```setup 
 conda activate jl_etc
 ```
-
 1. Install the components of this repository:
    ```setup 
    cd PATH_TO_THIS_REPO/baselines
