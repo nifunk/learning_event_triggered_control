@@ -55,8 +55,7 @@ def traj_segment_generator(pi, env, horizon, stochastic):
         prevacs[i] = prevac
 
         ob, rew, new, _ = env.step(ac)
-        #env.render()
-        #time.sleep(0.05)
+
         rews[i] = rew
 
         cur_ep_ret += rew
@@ -334,11 +333,6 @@ def learn(env, policy_func, *,
             
 
             info = [iters_so_far, np.mean(rewbuffer)]
-            #for i in range(num_options): info.append(opt_d[i])
-            #for i in range(num_options): info.append(std[i])
-            #for i in range(num_options): info.append(np.mean(np.array(seg['term_p']),axis=0)[i])
-            #for i in range(num_options): 
-            #    info.append(np.mean(t_advs[i]))
 
             results.write(out.format(*info))
             results.flush()
