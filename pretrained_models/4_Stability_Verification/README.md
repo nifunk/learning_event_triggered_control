@@ -8,9 +8,9 @@ To evaluate the models the following important note has to be considered:
 
 Launching the unstable model:
 ```setup
-python run_visual.py --opt 2  --app savename --env Pendulumnf-v0 --seed 0 --epoch 0 --path=/home/nfunk/Code_MA/learning_event_triggered_control/pretrained_models/4_Stability_Verification/retraining/ --render=1
+python run_visual.py --opt 2  --app savename --env Pendulumnf-v0 --seed 0 --epoch 0 --path=PATH_TO_REPO/learning_event_triggered_control/pretrained_models/4_Stability_Verification/retraining/ --render=1
 ```
 To evaluate the guaranteed stable model:
 ```setup
-python run_visual.py --opt 2  --app savename --env Pendulumnf-v0 --seed 0 --epoch 4 --path=/home/nfunk/Code_MA/learning_event_triggered_control/pretrained_models/4_Stability_Verification/retraining/ --render=1
+python run_visual.py --opt 2  --app savename --env Pendulumnf-v0 --seed 0 --epoch 4 --path=PATH_TO_REPO/learning_event_triggered_control/pretrained_models/4_Stability_Verification/retraining/ --render=1
 ```
