@@ -147,7 +147,7 @@ def learn(env, policy_func, *,
             print (dest)
             shutil.copy2(src,dest)
         # brute force copy normal env file at end of copying process:
-        env_files = ['pendulum_nf.py','gym_scalar_nf.py','cartpole.py']
+        env_files = ['pendulum_nf.py']
         for i in range(len(env_files)):
             src = os.path.join(envs_path+env_files[i])         
             shutil.copy2(src,dest)
