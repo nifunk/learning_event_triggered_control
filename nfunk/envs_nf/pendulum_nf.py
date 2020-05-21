@@ -26,10 +26,9 @@ class PendulumEnv(gym.Env):
 
         self.seed()
 
+        # use noise or not:
         self.use_noise = True
-        #self.use_noise = True 
         # Initialize a few variables:
-        #self.rew_scale = kwargs['reward_scale']
         self.rew_scale = 1.0
         self.state_cost_scale = 1.0
         if (self.use_noise):
@@ -41,11 +40,11 @@ class PendulumEnv(gym.Env):
             self.process_noise = 0.0
             self.noise_level = 0.0
 
-        #self.start_top = bool(kwargs['env_start_top'])
+        # start the pendulum on top or not
         self.start_top = True
-        #self.start_top = True
-        #self.use_early_reset = bool(kwargs['env_early_reset'])
+        # early reset means reset pendulum if falling down once
         self.use_early_reset = False
+        
         self.on_top = True
 
         # Default cost values:
@@ -58,7 +57,6 @@ class PendulumEnv(gym.Env):
     def seed(self, seed=None):
         seed_orig = seed
         self.np_random, seed = seeding.np_random(seed)
-        # from here on was not there before:
         if (seed_orig is None):
             seed_no = 0
         else:
@@ -72,7 +70,6 @@ class PendulumEnv(gym.Env):
         if not((np.shape(u)) == self.action_space.shape):
             comm = u[1]
             u = u[0]
-        #print (comm)
 
         th, thdot = self.state # th := theta
 
@@ -81,8 +78,6 @@ class PendulumEnv(gym.Env):
         l = 1.
         dt = self.dt
 
-        #if (abs(u[0])>self.max_torque):
-        #    print ("applied too much torque")
         orig_u = u[0]
         u = np.clip(u, -self.max_torque, self.max_torque)[0]
         self.last_u = u # for rendering
@@ -92,15 +87,11 @@ class PendulumEnv(gym.Env):
         if not(comm is None):
             costs += self.c_comm * comm
         newthdot = thdot + (-3*g/(2*l) * np.sin(th + np.pi) + 3./(m*l**2)*u) * dt
-        #newthdot = thdot + (3*g/(2*l) * th + 3./(m*l**2)*u) * dt
         newth = th + newthdot*dt
         if (abs(newthdot)>self.max_speed):
             print ("TOO FAST -> CLIPPING")
         newthdot = np.clip(newthdot, -self.max_speed, self.max_speed) #pylint: disable=E1111
 
-        #if (abs(angle_normalize(newth))>15*0.0174533):
-        #    print ("PENDULUM DOWN")
-        #    print (th)
 
         if (abs(angle_normalize(newth))>45*0.0174533 and self.use_early_reset):
             if (self.on_top):
@@ -110,32 +101,21 @@ class PendulumEnv(gym.Env):
         proc_noise = self.process_noise * np.random.randn(2, )
         self.state = np.array([newth, newthdot]) + proc_noise
 
-        # RETURN argument: observation, Kosten, Termination?, Dict um Werte hin und her zu geben!
+        # RETURN argument: observation, Kosten, Termination, Dict Values
         if not(self.on_top):
-            return self._get_obs(), -3000, True, {}    #was 100 or other reward 10000
+            return self._get_obs(), -3000, True, {}    
         else:
-            # +0.1 was previously not there...
-            return self._get_obs(), -costs*self.rew_scale, False, {} # in other rew setting +0.1
+            return self._get_obs(), -costs*self.rew_scale, False, {}
 
     def reset(self):
-        # Previous version: start really anywhere, totally at random:
-        #high = np.array([np.pi, 1])
-        #self.state = self.np_random.uniform(low=-high, high=high)
-        #self.last_u = None
-
-        # NEW:
         if (self.start_top):
-            #s_init = [0, 0] + self.noise_level * np.random.randn(2, )
             if (self.use_noise):
                 s_init = [0, 0] + np.random.normal(0.0,1e-2,(2, )) # can also use e-1 -> more disturbed
             else:
-                #s_init = [0.01, 0.0]
                 s_init = [0, 0] + np.random.normal(0.0,1e-2,(2, ))
         else:
             s_init = [np.pi, 0] + self.noise_level * np.random.randn(2, )
-            #s_init = [np.pi, 0] + np.random.normal(0.0,1e-2,(2, ))
-            #high = np.array([np.pi, 1])
-            #s_init = self.np_random.uniform(low=-high, high=high)
+
 
         self.state = s_init
         self.last_u = None
