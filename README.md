@@ -99,7 +99,7 @@ Further, instead of using the conda_env.yml; use the yaml: verification_env.yml.
 
 ### Results in the Pendulum and Highdimensional Environments
 
-Go into the folder: *functioning_implementations* and choose the desired configuration that you want to train. Inside the README of this folder are the exact instructions how to launch the training of the model and how to evaluate it later on. 
+* The instructions how to train and evaluate the available models are provided inside the README of the *functioning_implementations* folder 
 
 <!--
    1. The desired files have to be copied inside *learning_event_triggered_control/baselines/baselines/ppo1/*. 
