@@ -16,7 +16,7 @@ If you use this code, please kindly cite the publication **TODO: INSERT PUBLICAT
 
 ## Requirements 
 
-### For Reproducing the Results on the Pendulum / Highdimensional environments
+### For Training and Evaluating models on the Pendulum / Highdimensional environments
 
 1. (recommended but not required) Install [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/), using Python 3 or higher. 
 
@@ -65,20 +65,8 @@ If you use this code, please kindly cite the publication **TODO: INSERT PUBLICAT
          ```
    1. **add the MuJoCo license**, and the mjpro150 binaries to "/.mujoco"
 
-1. once all these packages are succesfully installed, go into the folder: *functioning_implementations* and choose the desired configuration that you want to train. Inside the folders are the exact instructions how to train the desired model. 
-   1. The desired files have to be copied inside *ppoc_off_tryout/baselines/baselines/ppo1/*. 
-   1. Then use the command from the description files. 
-   1. The output of every training is a folder which contains:
-      1. the source files (i.e. the files from which the trainings were started from), 
-      1. as well as the best model (during trainingtime) 
-      1. the model from every 50ths timestep 
-      1. 2 logging files. One of them shows the evolution of the reward over time "(TRAININGNAME...results.csv)", while the other one "(TRAININGNAME...bestmodel.csv)" depicts from which epoch the current best model has been obtained
 
-1. **or if the models should only be evaluated**
-   1. take a look at the readme inside the *eval_code* folder, how to evaluate the models
-
-
-### For Reproducing the results for the Stability Analysis
+### For Performing the Stability Analysis
 
 Perform the steps, exactly as described above.
 Further, instead of using the conda_env.yml; use the yaml: verification_env.yml. The conda environment is called mujoco-veri instead of jl_etc
@@ -104,8 +92,28 @@ Further, instead of using the conda_env.yml; use the yaml: verification_env.yml.
    cmake --build .
    ```
 * *Remark:* On Ubuntu 14.04 these instructions worked directly as described here. However, on Ubuntu 16.04 I had trouble as the building process failed due to an error of Asan. In order to circumvent the error, I simply set option(RUN_MEMORY_TEST "run cxxtest testing with ASAN ON" OFF) to off in the CMakeLists, then the commands also worked as described.
-* **Important:** for the framework to work, the path to Marabou has to be set correctly in the "checkpol.py" file
-* The instructions how to launch the retraining are contained in the folders **retrain_proc**
+* **Important:** for the framework to work, the path to Marabou has to be set correctly in the "retrain_proc/checkpol.py" file, inside this repository
+
+
+## Reproducing the Results - Training and Evaluating models
+
+### Results in the Pendulum and Highdimensional Environments
+
+Go into the folder: *functioning_implementations* and choose the desired configuration that you want to train. Inside the folders are the exact instructions how to train the desired model. 
+   1. The desired files have to be copied inside *learning_event_triggered_control/baselines/baselines/ppo1/*. 
+   1. Then use the command from the README file. 
+   1. The output of every training is a folder which contains:
+      1. the source files (i.e. the files from which the trainings were started from), 
+      1. as well as the best model (during trainingtime) 
+      1. the model from every 50ths timestep 
+      1. 2 logging files. One of them shows the evolution of the reward over time "(TRAININGNAME...results.csv)", while the other one "(TRAININGNAME...bestmodel.csv)" depicts from which epoch the current best model has been obtained
+
+1. **or if the models should only be evaluated**
+   1. take a look at the README inside the *functioning_implementations* folder (of the corresponding model that you trained)
+
+### Reproducing the results of the retraining procedure
+
+* The instructions how to launch the retraining procedure are contained in the README of the **retrain_proc** folder
 
 
 ## Repo overview
