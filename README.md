@@ -29,11 +29,18 @@ If you use this code, please kindly cite the publication **TODO: INSERT PUBLICAT
    ```
    2. Otherwise, make sure that your python environment you want to use contains the packages depicted in the yaml file
 
-1. Activate your Python environment ($ conda activate ...) or similar
+1. Activate your Python environment. If conda has been used:
+```setup 
+conda activate jl_etc
+```
 
-1. Install baselines (Inside this repository):
-   1. $ cd ppoc_off_tryout/baselines
-   1. $ pip install -e .
+1. Install the components of this repository:
+   ```setup 
+   cd PATH_TO_THIS_REPO/baselines
+   ```
+   ```setup 
+   pip install -e .
+   ```
 
 1. (recommended but not required) General Remark: The results depend on Mujoco as well as the OpenAI Gym. For me it was easiest to install both of these components from source as follows:
    1. [Gym repository](https://github.com/openai/gym), commit used: a6bbc269cf86b12778206d6ddda7097510e1328d
