@@ -118,15 +118,20 @@ Further, instead of using the conda_env.yml; use the yaml: verification_env.yml.
 
 * The instructions how to launch the retraining procedure are contained in the README of the *retrain_proc* folder
 
+## Pretrained models
+
+* The folder *pretrained_models* contains the models, trained using our algorithm that are presented in the publication.
+
 
 ## Repo overview
 
 Short overview over the repo:
 * **baselines** folder mainly includes the original OpenAI baselines repository, which has been slightly modified such that all sorts of algorithms can be trained
-* **eval_code** folder contains all the scripts for evaluating and plotting the results obtained by the algorithms
+* **eval_code** folder contains the script for evaluating the models
 * **nfunk** folder contains the customized gym environments (especially the Pendulum environment), helper functions needed for the baselines package and the implementation of LQR agents
 * **retrain_proc** folder contains the files required for retraining NN policies
-* **functioning implementations** folder contains all the source files and cluster launching scrips for the different implemented policies
+* **functioning implementations** folder contains all the source files for training the different implemented policies. Further, also the commands how to launch the training and evaluation are provided.
+* **pretrained_models** folder contains the models that have been presented in the publication, again with commands how to evaluate them
 * **z_additionals** contains several files:
   * the exported conda environments, required to reproduce the results 
   * it also contains a folder called modified_ant_env. Inside this folder are the instructions how to add the modified Ant environment (called Antnff-v8) to the OpenAI gym implementations
