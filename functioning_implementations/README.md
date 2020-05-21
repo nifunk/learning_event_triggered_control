@@ -25,3 +25,9 @@ In order to **train** a model using one of those implementations, proceed as fol
 In order to **evaluate** a model that has been trained using one of the available configurations, proceed as follows:
 * Lookup the evaluation command that is provided in the README of the configuration that you trained
 * go into *RootOfRepo/learning_event_triggered_control/eval_code* and execute the respective command
+
+## Using the modified Ant environment
+
+To use the modified Ant environment, the Gym repository has to be installed from source as described in the top-level readme.
+
+Then go into the README *root_of_repo/learning_event_triggered_control/z_additionals/modified_ant_env*. In there the steps are described how to add the modified environment. The environment is called: Antnff-v8 
