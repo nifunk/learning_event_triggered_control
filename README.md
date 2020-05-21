@@ -99,9 +99,11 @@ Further, instead of using the conda_env.yml; use the yaml: verification_env.yml.
 
 ### Results in the Pendulum and Highdimensional Environments
 
-Go into the folder: *functioning_implementations* and choose the desired configuration that you want to train. Inside the folders are the exact instructions how to train the desired model. 
+Go into the folder: *functioning_implementations* and choose the desired configuration that you want to train. Inside the README of this folder are the exact instructions how to launch the training of the model and how to evaluate it later on. 
+
+<!--
    1. The desired files have to be copied inside *learning_event_triggered_control/baselines/baselines/ppo1/*. 
-   1. Then use the command from the README file. 
+   1. Then use the launch command from the README file. 
    1. The output of every training is a folder which contains:
       1. the source files (i.e. the files from which the trainings were started from), 
       1. as well as the best model (during trainingtime) 
@@ -110,6 +112,7 @@ Go into the folder: *functioning_implementations* and choose the desired configu
 
 1. **or if the models should only be evaluated**
    1. take a look at the README inside the *functioning_implementations* folder (of the corresponding model that you trained)
+-->
 
 ### Reproducing the results of the retraining procedure
 
