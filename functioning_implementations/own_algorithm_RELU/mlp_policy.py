@@ -81,7 +81,6 @@ class MlpPolicy(object):
 
         # always terminate
         self.tpred = tf.nn.sigmoid(dense3D2(tf.stop_gradient(last_out), 1, "termhead", option, num_options=num_options, weight_init=U.normc_initializer(1.0)))[:,0]
-        #termination_sample = tf.greater(self.tpred, tf.random_uniform(shape=tf.shape(self.tpred),maxval=1.))
         termination_sample = tf.constant([True])
         
         # define the control policy / intra-option policy
@@ -92,13 +91,11 @@ class MlpPolicy(object):
             mean = dense3D2(last_out, pdtype.param_shape()[0]//2, "polfinal", option, num_options=num_options, weight_init=U.normc_initializer(0.01),bias=False)
             # now also use relus to squash to -1,1
             mean = (-tf.nn.relu(-(mean-1))+tf.nn.relu(-(mean+1)))+1
-            #mean = tf.nn.tanh(mean)
             logstd = tf.get_variable(name="logstd", shape=[num_options, 1, pdtype.param_shape()[0]//2], initializer=tf.zeros_initializer())
             pdparam = U.concatenate([mean, mean * 0.0 + logstd[option[0]]], axis=1)
         else:
             pdparam = U.dense(last_out, pdtype.param_shape()[0], "polfinal", U.normc_initializer(0.01))
 
-        #self.op_pi = tf.nn.softmax(U.dense(tf.stop_gradient(last_out), num_options, "OPfc%i"%(i+1), weight_init=U.normc_initializer(1.0)))
 
         self.pd = pdtype.pdfromflat(pdparam)
 
