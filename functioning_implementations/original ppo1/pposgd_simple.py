@@ -121,8 +121,6 @@ def learn(env, policy_func, *,
     results_path = dirname_rel
     envs_path = dirname_rel + 'nfunk/envs_nf/'
 
-    dirname = dirname_rel + "train_results/" + dirname
-
     print (dirname)
     #input ("wait here after dirname")
 
@@ -151,6 +149,10 @@ def learn(env, policy_func, *,
         for i in range(len(env_files)):
             src = os.path.join(envs_path+env_files[i])         
             shutil.copy2(src,dest)
+        os.makedirs(dest+"assets/")
+        src = os.path.join(envs_path+"assets/clockwise.png")
+        shutil.copy2(src,dest+"assets/")
+
 
     np.random.seed(seed)
     tf.set_random_seed(seed)

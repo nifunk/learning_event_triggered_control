@@ -9,7 +9,7 @@ python run_mujoco.py --env HalfCheetah-v2 --seed 0 --app savename --opt 2 --save
 Command to execute a model:
 
 ```setup
-python run_visual.py --env=HalfCheetah-v2 --seed=0 --opt=2 --epoch=400 --path=/home/niggi/results_ppoc_off_tryout/from_cluster/officialPPO_halfcheetahseed500_1opts_saves/ --render=1
+python run_visual.py --env=HalfCheetah-v2 --seed=0 --opt=2 --epoch=400 --path=PATH_TO_RESULTS_FOLDER --render=1
 ```
 
 

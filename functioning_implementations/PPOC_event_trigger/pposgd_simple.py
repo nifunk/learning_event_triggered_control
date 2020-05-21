@@ -219,6 +219,9 @@ def learn(env, policy_func, *,
         for i in range(len(env_files)):
             src = os.path.join(envs_path+env_files[i])         
             shutil.copy2(src,dest)
+        os.makedirs(dest+"assets/")
+        src = os.path.join(envs_path+"assets/clockwise.png")
+        shutil.copy2(src,dest+"assets/")
     ###
 
 

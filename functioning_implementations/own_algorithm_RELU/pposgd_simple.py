@@ -234,6 +234,9 @@ def learn(env, policy_func, *,
         # brute force copy normal env file at end of copying process:
         src = os.path.join(dirname_rel,'nfunk/envs_nf/pendulum_nf.py')         
         shutil.copy2(src,dest)
+        os.makedirs(dest+"assets/")
+        src = os.path.join(dirname_rel,'nfunk/envs_nf/assets/clockwise.png')
+        shutil.copy2(src,dest+"assets/")
     ###
 
 

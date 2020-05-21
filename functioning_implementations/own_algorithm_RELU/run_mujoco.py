@@ -22,7 +22,7 @@ def train(env_id, num_timesteps, seed, num_options,app, saves ,wsaves, epoch,dc)
     set_global_seeds(seed)
     from gym.envs.registration import register
     # Potential Pendulum Env
-    if (True):
+    if (env_id=='Pendulumnf-v0'):
         register(
             id='Pendulumnf-v0',
             entry_point='nfunk.envs_nf.pendulum_nf:PendulumEnv',
@@ -30,16 +30,7 @@ def train(env_id, num_timesteps, seed, num_options,app, saves ,wsaves, epoch,dc)
             #kwargs = vars(args),
         )
         env = gym.make('Pendulumnf-v0')
-    # Potential Scalar Env
-    if (False):
-        register(
-            id='Scalarnf-v0',
-            entry_point='nfunk.envs_nf.gym_scalar_nf:GymScalarEnv',
-            max_episode_steps=400,
-            #kwargs = vars(args),
-        )
-        env = gym.make('Scalarnf-v0')
-    if (False):
+    else:
         env = gym.make(env_id)
     def policy_fn(name, ob_space, ac_space):
         return mlp_policy.MlpPolicy(name=name, ob_space=ob_space, ac_space=ac_space,
