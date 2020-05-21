@@ -10,13 +10,13 @@ This folder contains various functioning implementations, which have been used t
 ## Training a model
 
 In order to **train** a model using one of those implementations, proceed as follows:
-* copy the files of the folders (namely mlp_policy.py, pposgd_simple.py and run_mujoco.py) to the location: RootOfRepo/learning_event_triggered_control/baselines/baselines/ppo1
-* all of the training runs create folders where the results of the respective trainings are stored. The names of the training runs can be adapted in the pposgd_simple.py file, using the variable "version_name"
-* for all of the trainings that include a penalty on communication, this factor also has to be set inside the pposgd_simple.py file via the variable "comm_penalty"
+* copy the files of the folders (namely *mlp_policy.py*, *pposgd_simple.py* and *run_mujoco.py*) to the location: *RootOfRepo/learning_event_triggered_control/baselines/baselines/ppo1*
+* all of the training runs create folders where the results of the respective trainings are stored. The names of the training runs can be adapted in the *pposgd_simple.py* file, using the variable "version_name"
+* for all of the trainings that include a penalty on communication, this factor also has to be set inside the *pposgd_simple.py* file via the variable "comm_penalty"
 * then inside: RootOfRepo/learning_event_triggered_control/baselines/baselines/ppo1 execute the command as specified in the README of the implementation you want to train
-* The output of every training is a folder inside RootOfRepo/learning_event_triggered_control/train_results/version_name which contains:
+* The output of every training is a folder inside *RootOfRepo/learning_event_triggered_control/train_results/version_name* which contains:
   * the source files (i.e. the files from which the trainings were started from), 
-  * as well as the best model (during trainingtime) 
+  * the best model (during trainingtime) 
   * the model from every 50ths timestep 
   * 2 logging files. One of them shows the evolution of the reward over time "(TRAININGNAME...results.csv)", while the other one "(TRAININGNAME...bestmodel.csv)" depicts from which epoch the current best model has been obtained
 
@@ -24,4 +24,4 @@ In order to **train** a model using one of those implementations, proceed as fol
 
 In order to **evaluate** a model that has been trained using one of the available configurations, proceed as follows:
 * Lookup the evaluation command that is provided in the README of the configuration that you trained
-* go into RootOfRepo/learning_event_triggered_control/eval_code and execute the respective command
+* go into *RootOfRepo/learning_event_triggered_control/eval_code* and execute the respective command

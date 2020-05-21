@@ -4,11 +4,15 @@ They have been adapted such that they can be used for my evaluation, etc. files 
 
 To train a model, execute: 
 
-python run_mujoco.py --env Ant-v2 --seed 100 --app savename --dc 0.1 --opt 2 --saves --wsaves
+```setup
+python run_mujoco.py --env HalfCheetah-v2 --seed 0 --app savename --dc 0.1 --opt 2 --saves --wsaves
+```
 
 To evaluate a model, execute:
 
-python run_visual.py --env=HalfCheetah-v2 --seed=500 --opt=2 --dc 0.1 --epoch=485 --path=PATH_TO_THE_RESULTS_FOLDER --render=1 --official=1 --orig_ppo=0 --app savename
+```setup
+python run_visual.py --env=HalfCheetah-v2 --seed=0 --opt=2 --epoch=485 --path=PATH_TO_THE_RESULTS_FOLDER --render=1 --official=1 --orig_ppo=0 --app savename
+```
 
 Important: In the current implementation of the run_visual.py script, an additional adaption in the file visual.py has to be done manually. One has to change the variable "event_trigger" to True (Line 49). After useage, set this again to False. The reason is: we have to adapt the state space also incorporating the last action.
 
