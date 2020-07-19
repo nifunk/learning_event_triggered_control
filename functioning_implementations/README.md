@@ -6,6 +6,7 @@ This folder contains various functioning implementations, which have been used t
 1. our propoeed learning algorithm without the event-trigger, i.e., **own_algorithm_no_trigger**
 1. our proposed learning algorithm, using ReLU activations functions only (needed to train models for the stability analysis) inside **own_algorithm_RELU**
 1. a modified version of the original option critic (PPOC) implementation. I.e., transformed for the case of event-triggered control, inside **PPOC_event_trigger** 
+1. a modified version of our proposed learning algorithm, where the control and communication policies are optimized separately, in an alternating fasion, inside **separate_train**
 
 ## Training a model
 
