@@ -1,6 +1,7 @@
 # Joint Learning of Event-triggered Control and Communication Policies
 
-This repository is the official implementation of [Joint Learning of Event-triggered Control and Communication Policies]() **TODO: insert Link of publication** by N. Funk, D. Baumann, V. Berenz and S. Trimpe. Additional video material depicting the performance of the trained models can accesssed [here](https://sites.google.com/view/learn-event-triggered-control).
+This repository is the official implementation of [Joint Learning of Event-triggered Control and Communication Policies](https://sites.google.com/view/
+learn-event-triggered-control) by N. Funk, D. Baumann, V. Berenz and S. Trimpe. Additional video material depicting the performance of the trained models can accesssed [here](https://sites.google.com/view/learn-event-triggered-control).
 
 ## Requirements 
 
@@ -136,7 +137,7 @@ The implementation of our proposed hierarchical reinforcement learning algorithm
 
 For the stability verification algorithm we use parts from the [NNet repository](https://github.com/sisl/NNet). The license, as well as the files that we use from this repo are placed in the folder **retrain_proc/utils**.
 
-If you use this code, please kindly cite the publication **TODO: INSERT PUBLICATION!!!**
+If you use this code, please kindly cite the publication.
 
 ## Copyright
 
