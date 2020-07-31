@@ -1,4 +1,4 @@
-# Joint Learning of Event-triggered Control and Communication Policies
+# Learning Event-triggered Control from Data through Joint Optimization
 
 This repository is the official implementation of [Learning Event-triggered Control from Data through Joint Optimization](https://sites.google.com/view/learn-event-triggered-control) by N. Funk, D. Baumann, V. Berenz and S. Trimpe. Additional video material depicting the performance of the trained models can accesssed [here](https://sites.google.com/view/learn-event-triggered-control).
 
