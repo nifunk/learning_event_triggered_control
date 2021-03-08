@@ -1,6 +1,23 @@
 # Learning Event-triggered Control from Data through Joint Optimization
 
-This repository is the official implementation of [Learning Event-triggered Control from Data through Joint Optimization](https://arxiv.org/pdf/2008.04712.pdf) by N. Funk, D. Baumann, V. Berenz and S. Trimpe. Additional video material depicting the performance of the trained models can accesssed [here](https://sites.google.com/view/learn-event-triggered-control).
+This repository is the official implementation of [Learning Event-triggered Control from Data through Joint Optimization](https://arxiv.org/pdf/2008.04712.pdf) by N. Funk, D. Baumann, V. Berenz and S. Trimpe, which has been published in the IFAC Journal of Systems and Control.
+ Additional video material depicting the performance of the trained models can accesssed [here](https://sites.google.com/view/learn-event-triggered-control).
+ 
+If you use code or ideas from this work for your projects or research, please cite it.
+
+```
+@article{funk_learn_etc,
+title = {Learning event-triggered control from data through joint optimization},
+journal = {IFAC Journal of Systems and Control},
+volume = {16},
+pages = {100144},
+year = {2021},
+issn = {2468-6018},
+doi = {https://doi.org/10.1016/j.ifacsc.2021.100144},
+url = {https://www.sciencedirect.com/science/article/pii/S2468601821000055},
+author = {Niklas Funk and Dominik Baumann and Vincent Berenz and Sebastian Trimpe}
+}
+```
 
 ## Requirements 
 
