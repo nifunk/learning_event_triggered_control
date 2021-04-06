@@ -155,6 +155,3 @@ For the stability verification algorithm we use parts from the [NNet repository]
 
 If you use this code, please kindly cite the publication.
 
-## Copyright
-
-Copyright (c) 2020 Max Planck Gesellschaft
