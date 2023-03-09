@@ -82,7 +82,7 @@ Further, instead of using the conda_env.yml; use the yaml: verification_env.yml.
    cd Marabou
    ```
    ```setup 
-   git checkout 9a40623e2cff35c4a2adcad1217ff0741817ceee
+   git checkout 742247769565f433a18bcadbc2ecfbc514c275de
    ```
    ```setup 
    mkdir build
