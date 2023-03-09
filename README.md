@@ -19,6 +19,11 @@ author = {Niklas Funk and Dominik Baumann and Vincent Berenz and Sebastian Trimp
 }
 ```
 
+## Important Information
+
+This branch of the repository is intended to provide a running version for the retraining procedure of the policies
+only and has been created in March 2023.
+
 ## Requirements 
 
 ### For Training and Evaluating models on the Pendulum / Highdimensional environments
@@ -47,29 +52,6 @@ author = {Niklas Funk and Dominik Baumann and Vincent Berenz and Sebastian Trimp
    pip install -e .
    ```
 
-1. (recommended but not required) General Remark: The results depend on Mujoco as well as the OpenAI Gym. For me it was easiest to install both of these components from source as follows:
-   1. Clone the [Gym repository](https://github.com/openai/gym), commit used: a6bbc269cf86b12778206d6ddda7097510e1328d
-         ```setup 
-         cd gym
-         ```
-         ```setup 
-         git checkout a6bbc269cf86b12778206d6ddda7097510e1328d
-         ```
-         ```setup 
-         pip install -e .
-         ```
-   1. Clone [Mujoco-py repository](https://github.com/openai/mujoco-py), commit used: 452b3629da92c5f9227430f5e79788db8ef0b71
-         ```setup 
-         cd mujoco-py
-         ```
-         ```setup 
-         git checkout 1452b3629da92c5f9227430f5e79788db8ef0b71
-         ```
-         ```setup 
-         pip install -e .
-         ```
-   1. **add the MuJoCo license**, and the mjpro150 binaries to "/.mujoco"
-
 
 ### For Performing the Stability Analysis
 
@@ -77,7 +59,7 @@ Perform the steps, exactly as described above.
 Further, instead of using the conda_env.yml; use the yaml: verification_env.yml. The conda environment is called mujoco-veri instead of jl_etc
 
 **In addition to the previously presented steps, we also have to install Marabou:**
-* Clone [Marabou repository](https://github.com/NeuralNetworkVerification/Marabou), commit used: 9a40623e2cff35c4a2adcad1217ff0741817ceee
+* Clone [Marabou repository](https://github.com/NeuralNetworkVerification/Marabou), commit used: 742247769565f433a18bcadbc2ecfbc514c275de
    ```setup 
    cd Marabou
    ```
