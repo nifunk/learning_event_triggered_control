@@ -4,6 +4,14 @@ This folder is designed for the purpose of doing the retraining procedure for co
 
 It is important that for using this retraining procedure one can only use policies that have been parametrized using the ReLU activation function only. Further, the mlp_policy.py file has to be slightly adapted as during the first training stage, we stochastically sample the action to be applied, while now, for the retraining, the stochasticity has to be eliminated. We also have to eliminate the stochasticity for the policy over options. The exemplary adapted mlp_policy file can be retrieved from *example/mlp_policy.py*. This file can be used to directly replace the mlp_policy.py file used in the first training stage.
 
+## Shortcut for performing the retraining
+
+Since this branch is intended to get the retraining to work, the retraining can directly be executed using:
+	```
+	python3 run_retrain.py --opt 2 --seed 0 --app savename --epoch 0 --path=PATH_TO_REPO/learning_event_triggered_control/pretrained_models/4_Stability_Verification/retraining/ --env Pendulumnf-v0
+	```
+This will launch the retraining based on a model that is already pretrained and provided in this repo.
+
 ## Performing the retraining
 
 1. Before applying the retraining provedure, train a normal model using the **own_algorithm_RELU** implementation. Important: In the *run_mujoco.py* file adapt the number of hidden neurons per layer from 64 to 32 (this is the variable 'hid_size').
