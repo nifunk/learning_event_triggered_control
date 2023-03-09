@@ -7,9 +7,11 @@ It is important that for using this retraining procedure one can only use polici
 ## Shortcut for performing the retraining
 
 Since this branch is intended to get the retraining to work, the retraining can directly be executed using:
-	```
-	python3 run_retrain.py --opt 2 --seed 0 --app savename --epoch 0 --path=PATH_TO_REPO/learning_event_triggered_control/pretrained_models/4_Stability_Verification/retraining/ --env Pendulumnf-v0
-	```
+
+```setup
+python3 run_retrain.py --opt 2 --seed 0 --app savename --epoch 0 --path=PATH_TO_REPO/learning_event_triggered_control/pretrained_models/4_Stability_Verification/retraining/ --env Pendulumnf-v0
+```
+
 This will launch the retraining based on a model that is already pretrained and provided in this repo.
 
 ## Performing the retraining
