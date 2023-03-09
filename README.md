@@ -23,6 +23,11 @@ author = {Niklas Funk and Dominik Baumann and Vincent Berenz and Sebastian Trimp
 
 This branch of the repository is intended to provide a running version for the retraining procedure of the policies
 only and has been created in March 2023.
+The instructions how to launch the retraining procedure are contained in the README of the *retrain_proc* folder.
+
+However, the changes which were necessary to get the retraining procedure running again will likely have broken some of 
+the other features of this code.
+This should be addressed in the future.
 
 ## Requirements 
 

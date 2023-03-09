@@ -11,7 +11,7 @@ import time
 import os
 
 # Path to Marabou folder if you did not export it
-sys.path.append('/home/nfunk/Code_MA/nn_veri/Marabou')
+sys.path.append('/home/funk/Code_TUD/LEARN_ETC/Marabou')
 
 
 def default_block(last_bias,final=False):
@@ -342,7 +342,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][8],angvel_save)
-		vals1, stats1 = netcheck.solve()
+		(vals1, stats1) = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
 			# if recovering from the most extreme state is not possible this will never work -> QUIT
@@ -363,7 +363,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	# no communication:
 	netcheck.setLowerBound(netcheck.outputVars[0][11],0.0)
 	netcheck.setUpperBound(netcheck.outputVars[0][7],-ang) 
-	vals1, stats1 = netcheck.solve()
+	(vals1, stats1) = netcheck.solve()
 	del netcheck
 	if (vals1=={}):
 		print ("Found left bound for no communication")
@@ -378,7 +378,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][8],angvel_save)
-		vals1, stats1 = netcheck.solve()
+		(vals1, stats1) = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
 			# if recovering is not possible this will never work -> QUIT
@@ -391,7 +391,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	# communication:
 	netcheck.setUpperBound(netcheck.outputVars[0][11],0.0)
 	netcheck.setUpperBound(netcheck.outputVars[0][9],-ang)
-	vals1, stats1 = netcheck.solve()
+	(vals1, stats1) = netcheck.solve()
 	del netcheck
 	if (vals1=={}):
 		print ("Found left bound for communication")
@@ -406,7 +406,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][8],angvel_save)
-		vals1, stats1 = netcheck.solve()
+		(vals1, stats1) = netcheck.solve()
 		time.sleep(5.0)
 		del netcheck
 		if (vals1=={}):
@@ -422,7 +422,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	# no communication:
 	netcheck.setLowerBound(netcheck.outputVars[0][11],0.0)
 	netcheck.setLowerBound(netcheck.outputVars[0][7],ang)
-	vals1, stats1 = netcheck.solve()
+	(vals1, stats1) = netcheck.solve()
 	del netcheck
 	if (vals1=={}):
 		print ("Found right bound for no communication")
@@ -435,7 +435,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][8],angvel_save)
-		vals1, stats1 = netcheck.solve()
+		(vals1, stats1) = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
 			# if recovering is not possible this will never work -> QUIT
@@ -449,7 +449,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	# communication:
 	netcheck.setUpperBound(netcheck.outputVars[0][11],0.0)
 	netcheck.setLowerBound(netcheck.outputVars[0][9],ang)
-	vals1, stats1 = netcheck.solve()
+	(vals1, stats1) = netcheck.solve()
 	del netcheck
 	if (vals1=={}):
 		print ("Found right bound for communication")
@@ -462,7 +462,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][8],angvel_save)
-		vals1, stats1 = netcheck.solve()
+		(vals1, stats1) = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
 			# if recovering is not possible this will never work -> QUIT
@@ -477,7 +477,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	# no communication:
 	netcheck.setLowerBound(netcheck.outputVars[0][11],0.0)
 	netcheck.setUpperBound(netcheck.outputVars[0][8],-angvel)
-	vals1, stats1 = netcheck.solve()
+	(vals1, stats1) = netcheck.solve()
 	del netcheck
 	if (vals1=={}):
 		print ("Found bottom bound for no communication")
@@ -490,7 +490,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][8],angvel_save)
-		vals1, stats1 = netcheck.solve()
+		(vals1, stats1) = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
 			# if recovering is not possible this will never work -> QUIT
@@ -504,7 +504,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	# communication:
 	netcheck.setUpperBound(netcheck.outputVars[0][11],0.0)
 	netcheck.setUpperBound(netcheck.outputVars[0][10],-angvel)
-	vals1, stats1 = netcheck.solve()
+	(vals1, stats1) = netcheck.solve()
 	del netcheck
 	if (vals1=={}):
 		print ("Found bottom bound for communication")
@@ -517,7 +517,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][8],angvel_save)
-		vals1, stats1 = netcheck.solve()
+		(vals1, stats1) = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
 			# if recovering is not possible this will never work -> QUIT
@@ -532,7 +532,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	# no communication:
 	netcheck.setLowerBound(netcheck.outputVars[0][11],0.0)
 	netcheck.setLowerBound(netcheck.outputVars[0][8],angvel)
-	vals1, stats1 = netcheck.solve()
+	(vals1, stats1) = netcheck.solve()
 	del netcheck
 	if (vals1=={}):
 		print ("Found top bound for no communication")
@@ -545,7 +545,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][8],angvel_save)
-		vals1, stats1 = netcheck.solve()
+		(vals1, stats1) = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
 			# if recovering is not possible this will never work -> QUIT
@@ -559,7 +559,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 	# communication:
 	netcheck.setUpperBound(netcheck.outputVars[0][11],0.0)
 	netcheck.setLowerBound(netcheck.outputVars[0][10],angvel)
-	vals1, stats1 = netcheck.solve()
+	(vals1, stats1) = netcheck.solve()
 	del netcheck
 	if (vals1=={}):
 		print ("Found top bound for communication")
@@ -572,7 +572,7 @@ def check_whole(nnet_file_name,ang,ang_save,angvel,angvel_save):
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][8],angvel_save)
-		vals1, stats1 = netcheck.solve()
+		(vals1, stats1) = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
 			# if recovering is not possible this will never work -> QUIT
@@ -615,7 +615,7 @@ def check_whole_comp_comm_eff(nnet_file_name,ang,ang_save,angvel,angvel_save,uk,
 	netcheck.setUpperBound(netcheck.outputVars[0][idx],ang_save)
 	netcheck.setLowerBound(netcheck.outputVars[0][idx+1],-angvel_save)
 	netcheck.setUpperBound(netcheck.outputVars[0][idx+1],angvel_save)
-	vals1, stats1 = netcheck.solve()
+	(vals1, stats1) = netcheck.solve()
 	del netcheck
 	if not(vals1=={}):
 		# this means that it is fine
@@ -633,7 +633,7 @@ def check_whole_comp_comm_eff(nnet_file_name,ang,ang_save,angvel,angvel_save,uk,
 		netcheck.setUpperBound(netcheck.outputVars[0][7],ang_save)
 		netcheck.setLowerBound(netcheck.outputVars[0][8],-angvel_save)
 		netcheck.setUpperBound(netcheck.outputVars[0][8],angvel_save)
-		vals1, stats1 = netcheck.solve()
+		(vals1, stats1) = netcheck.solve()
 		del netcheck
 		if (vals1=={}):
 			# if recovering is not possible this will never work -> QUIT
